@@ -30,7 +30,7 @@ namespace RssSE.Identity.API.Helpers
         public async Task<UserLoginResponse> GenerateUserToken(string email)
         {
             var userInfos = await GetUserInfos(email);
-            var response = new UserLoginResponse
+            return new UserLoginResponse
             {
                 AccessToken = WriteUserToken(),
                 ExpiresIn = TimeSpan.FromHours(_appSettings.ExpirationInHours).TotalSeconds,
@@ -41,7 +41,6 @@ namespace RssSE.Identity.API.Helpers
                     UserClaims = userInfos.Claims.Select(x => new UserClaim { Type = x.Type, Value = x.Value })
                 }
             };
-            return response;
         }
 
         private void GetUserClaimsIdentity(UserInfosDto userInfos)
