@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using RssSE.WebApp.MVC.Extensions;
 
 namespace RssSE.WebApp.MVC.Configuration
 {
@@ -20,7 +21,8 @@ namespace RssSE.WebApp.MVC.Configuration
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/erro/500");
+                app.UseStatusCodePagesWithRedirects("erro/{0}");
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
@@ -29,6 +31,8 @@ namespace RssSE.WebApp.MVC.Configuration
             app.UseRouting();
 
             app.UseAuthenticationConfiguration();
+
+            app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

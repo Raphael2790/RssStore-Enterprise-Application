@@ -10,6 +10,8 @@ namespace RssSE.Identity.API.Configuration
     {
         public static IServiceCollection AddApiConfiguration(this IServiceCollection services)
         {
+            services.AddCompressionConfiguration();
+
             services.AddControllers();
 
             //Helper
@@ -24,6 +26,8 @@ namespace RssSE.Identity.API.Configuration
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseResponseCompression();
 
             app.UseHttpsRedirection();
 

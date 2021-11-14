@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace RssSE.WebApp.MVC.Controllers
 {
-    public class IdentityController : Controller
+    public class IdentityController : MainController
     {
         private readonly IIdentityService _identityService;
 
@@ -30,46 +30,45 @@ namespace RssSE.WebApp.MVC.Controllers
         public async Task<IActionResult> Register(RegisterUserViewModel registerUser)
         {
             if (!ModelState.IsValid) return View(registerUser);
-
             var response = await _identityService.Register(registerUser);
-
-            //if (false) return View(registerUser);
-
+            if (ResponseHasErrors(response.ResponseResult)) return View(registerUser);
             await LoginUserInContext(response);
-
             return RedirectToAction("Index", nameof(HomeController));
         }
 
         [HttpGet("login")]
-        public IActionResult Login()
+        public IActionResult Login(string returnUrl = null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(UserLoginViewModel userLogin)
+        public async Task<IActionResult> Login(UserLoginViewModel userLogin, string returnUrl = null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
             if (!ModelState.IsValid) return View(userLogin);
-
             var response = await _identityService.Login(userLogin);
-
-            //if (false) return View(userLogin);
+            if (ResponseHasErrors(response.ResponseResult)) return View(userLogin);
             await LoginUserInContext(response);
-
-            return RedirectToAction("Index", "Home");
+            if(!string.IsNullOrEmpty(returnUrl)) return RedirectToAction("Index", "Home");
+            return LocalRedirect(returnUrl);
         }
 
         [HttpGet("logout")]
         public async Task<IActionResult> Logout()
         {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Index", "Home");
         }
 
         private async Task LoginUserInContext(UserLoginResponse response)
         {
             var token = GetFormatedToken(response.AccessToken);
-            var claims = new List<Claim>();
-            claims.Add(new Claim("JWT", response.AccessToken));
+            var claims = new List<Claim>
+            {
+                new Claim("JWT", response.AccessToken)
+            };
             claims.AddRange(token.Claims);
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var authProperties = new AuthenticationProperties { ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(60), IsPersistent = true };

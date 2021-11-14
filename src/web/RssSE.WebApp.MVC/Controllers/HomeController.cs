@@ -1,23 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using RssSE.WebApp.MVC.Models;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace RssSE.WebApp.MVC.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
-
         public IActionResult Index()
         {
             return View();
@@ -28,10 +15,20 @@ namespace RssSE.WebApp.MVC.Controllers
             return View();
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        [Route("erro/{id:length(3,3)}")]
+        public IActionResult Error(int id)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            if (IsMappedStatusCodeError(id)) 
+            {
+                var modelError = ErrorViewModel.ErroViewModelFactory.CreateErrorViewModel(id);
+                return View("Error", modelError);
+            }
+            else
+            {
+                return StatusCode(404);
+            }
         }
+
+        private bool IsMappedStatusCodeError(int id) => id == 500 || id == 404 || id == 403;
     }
 }
