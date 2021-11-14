@@ -1,4 +1,4 @@
-﻿namespace RssSE.Identity.API.Extensions
+﻿namespace RssSE.WebApi.Core.Identity
 {
     public class AppSettings
     {

@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\building blocks\RssSE.WebApi.Core\RssSE.WebApi.Core.csproj" />
     <ProjectReference Include="..\RssSE.Identity.Data\RssSE.Identity.Data.csproj" />
   </ItemGroup>
 

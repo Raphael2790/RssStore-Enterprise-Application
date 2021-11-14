@@ -51,7 +51,7 @@ namespace RssSE.WebApp.MVC.Controllers
             var response = await _identityService.Login(userLogin);
             if (ResponseHasErrors(response.ResponseResult)) return View(userLogin);
             await LoginUserInContext(response);
-            if(!string.IsNullOrEmpty(returnUrl)) return RedirectToAction("Index", "Home");
+            if(string.IsNullOrEmpty(returnUrl)) return RedirectToAction("Index", "Home");
             return LocalRedirect(returnUrl);
         }
 

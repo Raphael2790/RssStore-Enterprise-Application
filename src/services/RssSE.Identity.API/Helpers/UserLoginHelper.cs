@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using RssSE.Identity.API.Extensions;
 using RssSE.Identity.API.Models;
+using RssSE.WebApi.Core.Identity;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;

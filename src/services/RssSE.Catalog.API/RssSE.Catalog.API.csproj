@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -9,10 +9,20 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.11.1" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.17" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.17">
+		<PrivateAssets>all</PrivateAssets>
+		<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+	<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.17" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="3.1.17" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="3.1.17" />
+	<PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <ProjectReference Include="..\..\building blocks\RssSE.Core\RssSE.Core.csproj" />
+    <ProjectReference Include="..\..\building blocks\RssSE.WebApi.Core\RssSE.WebApi.Core.csproj" />
   </ItemGroup>
 
 

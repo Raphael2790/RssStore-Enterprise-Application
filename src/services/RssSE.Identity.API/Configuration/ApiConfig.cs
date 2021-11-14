@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RssSE.Identity.API.Helpers;
+using RssSE.WebApi.Core.Identity;
 
 namespace RssSE.Identity.API.Configuration
 {
@@ -34,7 +35,7 @@ namespace RssSE.Identity.API.Configuration
             app.UseRouting();
 
             //deve sempre estar entre routing e endpoints
-            app.UseIdentityConfiguration();
+            app.UseAuthConfiguration();
 
             app.UseEndpoints(endpoints =>
             {
