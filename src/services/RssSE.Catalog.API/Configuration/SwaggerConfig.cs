@@ -18,6 +18,31 @@ namespace RssSE.Catalog.API.Configuration
                     Contact = new OpenApiContact { Email = "rssshev@enterprise.com", Name = "Raphael Silvestre" },
                     License = new OpenApiLicense { Name = "MIT", Url = new Uri("https://opensource.org/licenses/MIT") }
                 });
+
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    BearerFormat = "JWT",
+                    Description = "Insira o token JWT desta maneira: Bearer {seu token}",
+                    In = ParameterLocation.Header,
+                    Scheme = "Bearer",
+                    Type = SecuritySchemeType.ApiKey,
+                    Name = "Authorization"
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Id = "Bearer",
+                                Type = ReferenceType.SecurityScheme
+                            }
+                        },
+                        new string[]{ }
+                    }
+                });
             });
         }
 

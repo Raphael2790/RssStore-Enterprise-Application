@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Refit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,20 +25,27 @@ namespace RssSE.WebApp.MVC.Extensions
             }
             catch (CustomHttpRequestException ex)
             {
-                HandleRequestExceptionAsync(context, ex);
-                throw;
+                HandleRequestExceptionAsync(context, ex.StatusCode);
+            }
+            catch(ValidationApiException ex)
+            {
+                HandleRequestExceptionAsync(context, ex.StatusCode);
+            }
+            catch(ApiException ex)
+            {
+                HandleRequestExceptionAsync(context, ex.StatusCode);
             }
         }
 
-        private void HandleRequestExceptionAsync(HttpContext context, CustomHttpRequestException ex)
+        private void HandleRequestExceptionAsync(HttpContext context, HttpStatusCode statusCode)
         {
-            if(ex.StatusCode == HttpStatusCode.Unauthorized)
+            if(statusCode == HttpStatusCode.Unauthorized)
             {
                 context.Response.Redirect($"/login?ReturnUrl={context.Request.Path}");
                 return;
             }
 
-            context.Response.StatusCode = (int)ex.StatusCode;
+            context.Response.StatusCode = (int)statusCode;
         }
     }
 }
