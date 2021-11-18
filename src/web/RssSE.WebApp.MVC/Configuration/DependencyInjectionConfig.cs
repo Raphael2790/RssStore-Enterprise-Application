@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Polly;
 using RssSE.WebApp.MVC.Extensions;
 using RssSE.WebApp.MVC.Extensions.Interfaces;
 using RssSE.WebApp.MVC.Interfaces.Services;
@@ -16,21 +17,25 @@ namespace RssSE.WebApp.MVC.Configuration
         public static void RegisterServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddTransient<HttpClientAuthorizationDelegatingHandler>();
+
             services.AddHttpClient<IIdentityService, IdentityService>(client => 
             {
                 client.BaseAddress = new Uri(configuration.GetSection("IdentityBaseServiceUrl").Value);
-            });
+            })
+                .AddTransientHttpErrorPolicy(p => p.WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(2)));
 
-            //services.AddHttpClient<ICatalogService, CatalogService>(client =>
-            //{
-            //    client.BaseAddress = new Uri(configuration.GetSection("CatalogBaseServiceUrl").Value);
-            //}).AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>();
-
-            services.AddHttpClient("Refit", client =>
+            services.AddHttpClient<ICatalogService, CatalogService>(client =>
             {
                 client.BaseAddress = new Uri(configuration.GetSection("CatalogBaseServiceUrl").Value);
             }).AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
-               .AddTypedClient(Refit.RestService.For<ICatalogServiceRefit>);
+              .AddPolicyHandler(PollyExtensions.RetryAsyncWithThreeAttemptsAndLogging())
+              .AddPolicyHandler(PollyExtensions.CircuitBreakAfterThreeAttempts());
+
+            //services.AddHttpClient("Refit", client =>
+            //{
+            //    client.BaseAddress = new Uri(configuration.GetSection("CatalogBaseServiceUrl").Value);
+            //}).AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
+            //   .AddTypedClient(Refit.RestService.For<ICatalogServiceRefit>);
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 

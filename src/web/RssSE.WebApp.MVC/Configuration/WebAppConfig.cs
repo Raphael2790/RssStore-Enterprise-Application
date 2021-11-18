@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using RssSE.WebApp.MVC.Extensions;
+using System.Globalization;
 
 namespace RssSE.WebApp.MVC.Configuration
 {
@@ -38,6 +39,14 @@ namespace RssSE.WebApp.MVC.Configuration
             app.UseAuthenticationConfiguration();
 
             app.UseMiddleware<ExceptionMiddleware>();
+
+            var supportedCultures = new[] { new CultureInfo("pt-BR") };
+            app.UseRequestLocalization(new RequestLocalizationOptions 
+            {
+                DefaultRequestCulture = new RequestCulture("pt-BR"),
+                SupportedCultures = supportedCultures,
+                SupportedUICultures = supportedCultures
+            });
 
             app.UseEndpoints(endpoints =>
             {

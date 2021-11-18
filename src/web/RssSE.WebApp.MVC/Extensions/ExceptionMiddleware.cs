@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Polly.CircuitBreaker;
 using Refit;
 using System;
 using System.Collections.Generic;
@@ -35,6 +36,10 @@ namespace RssSE.WebApp.MVC.Extensions
             {
                 HandleRequestExceptionAsync(context, ex.StatusCode);
             }
+            catch (BrokenCircuitException)
+            {
+                HandleBrokenCircuitExceptionAsync(context);
+            }
         }
 
         private void HandleRequestExceptionAsync(HttpContext context, HttpStatusCode statusCode)
@@ -47,5 +52,7 @@ namespace RssSE.WebApp.MVC.Extensions
 
             context.Response.StatusCode = (int)statusCode;
         }
+
+        private void HandleBrokenCircuitExceptionAsync(HttpContext context) => context.Response.Redirect("/sistema-indisponível");
     }
 }

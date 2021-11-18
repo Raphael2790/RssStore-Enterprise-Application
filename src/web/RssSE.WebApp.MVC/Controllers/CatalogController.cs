@@ -7,8 +7,8 @@ namespace RssSE.WebApp.MVC.Controllers
 {
     public class CatalogController : MainController
     {
-        private readonly ICatalogServiceRefit _catalogService;
-        public CatalogController(ICatalogServiceRefit catalogService)
+        private readonly ICatalogService _catalogService;
+        public CatalogController(ICatalogService catalogService)
         {
             _catalogService = catalogService;
         }
