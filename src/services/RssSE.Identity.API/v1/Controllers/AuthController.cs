@@ -1,7 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using EasyNetQ;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using RssSE.Core.Messages.Integration;
 using RssSE.Identity.API.Helpers;
 using RssSE.Identity.API.Models;
+using RssSE.WebApi.Core.Controllers;
+using System;
 using System.Threading.Tasks;
 
 namespace RssSE.Identity.API.v1.Controllers
@@ -12,6 +16,7 @@ namespace RssSE.Identity.API.v1.Controllers
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IUserLoginHelper _userLoginHelper;
+        private IBus _bus;
 
         public AuthController(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager, IUserLoginHelper userLoginHelper)
         {
@@ -32,12 +37,25 @@ namespace RssSE.Identity.API.v1.Controllers
             };
             var result = await _userManager.CreateAsync(user, registerUser.Password);
             if (result.Succeeded)
+            {
+                await RegisterCustomer(registerUser);
                 return CustomResponse(await _userLoginHelper.GenerateUserToken(registerUser.Email));
+            }
 
             foreach (var error in result.Errors)
                 AddProcessError(error.Description);
 
             return CustomResponse();
+        }
+
+        private async Task<ResponseMessage> RegisterCustomer(RegisterUserViewModel registerUser)
+        {
+            var user = await _userManager.FindByEmailAsync(registerUser.Email);
+            var registerCustomer = new RegisteredUserIntegrationEvent(Guid.Parse(user.Id), registerUser.Name, registerUser.Email,
+                registerUser.Cpf);
+            _bus = RabbitHutch.CreateBus("host=localhost:5672");
+            var success = await _bus.Rpc.RequestAsync<RegisteredUserIntegrationEvent, ResponseMessage>(registerCustomer);
+            return success;
         }
 
         [HttpPost("autenticar")]

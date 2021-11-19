@@ -1,15 +1,24 @@
-﻿using System;
+﻿using RssSE.Core.Messages;
+using System;
+using System.Collections.Generic;
 
 namespace RssSE.Core.DomainObjects.BaseEntity
 {
     public abstract class Entity
     {
+        public Guid Id { get; set; }
+        private List<Event> _notifications;
+        public IReadOnlyCollection<Event> Notifications => _notifications?.AsReadOnly();
+
         protected Entity()
         {
             Id = Guid.NewGuid();
+            _notifications = new List<Event>();
         }
 
-        public Guid Id { get; set; }
+        public void AddEvent(Event @event) => _notifications.Add(@event);
+        public void RemoveEvent(Event @event) => _notifications?.Remove(@event);
+        public void ClearEvents() => _notifications?.Clear();
 
         public override bool Equals(object obj)
         {

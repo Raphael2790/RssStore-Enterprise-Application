@@ -1,6 +1,7 @@
 ﻿using FluentValidation.Results;
 using MediatR;
 using RssSE.Client.API.Application.Commands;
+using RssSE.Client.API.Application.Events;
 using RssSE.Client.API.Models.Interfaces;
 using RssSE.Core.Messages;
 using System.Threading;
@@ -9,7 +10,7 @@ using ClientModel = RssSE.Client.API.Models.Client;
 
 namespace RssSE.Client.API.Application.Handlers
 {
-    public class ClientCommandHandler : CommandHandler, IRequestHandler<RegisterClientCommand, ValidationResult>
+    public class ClientCommandHandler : CommandHandler, IRequestHandler<RegisterCustomerCommand, ValidationResult>
     {
         private readonly IClientRepository _clientRepository;
 
@@ -18,7 +19,7 @@ namespace RssSE.Client.API.Application.Handlers
             _clientRepository = clientRepository;
         }
 
-        public async Task<ValidationResult> Handle(RegisterClientCommand message, CancellationToken cancellationToken)
+        public async Task<ValidationResult> Handle(RegisterCustomerCommand message, CancellationToken cancellationToken)
         {
             if (!message.IsValid()) return message.ValidationResult;
             var client = new ClientModel(message.Id, message.Name, message.Email, message.Cpf);
@@ -28,6 +29,7 @@ namespace RssSE.Client.API.Application.Handlers
                 return ValidationResult;
             }
             _clientRepository.Add(client);
+            client.AddEvent(new RegisteredClientEvent(message.Id, message.Name, message.Email, message.Cpf));
             return await PersistData(_clientRepository.UnitOfWork);
         }
     }

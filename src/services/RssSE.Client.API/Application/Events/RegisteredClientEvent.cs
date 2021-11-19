@@ -3,16 +3,16 @@ using RssSE.Core.DomainObjects.ValueObjects;
 using RssSE.Core.Messages;
 using System;
 
-namespace RssSE.Client.API.Application.Commands
+namespace RssSE.Client.API.Application.Events
 {
-    public class RegisterClientCommand : Command
+    public class RegisteredClientEvent : Event
     {
         public Guid Id { get; private set; }
         public string Name { get; private set; }
         public string Email { get; private set; }
         public string Cpf { get; private set; }
 
-        public RegisterClientCommand(Guid id, string name, string email, string cpf)
+        public RegisteredClientEvent(Guid id, string name, string email, string cpf)
         {
             AggregateId = id;
             Id = id;
@@ -21,20 +21,21 @@ namespace RssSE.Client.API.Application.Commands
             Cpf = cpf;
         }
 
-        public override bool IsValid() 
+        //Caso o evento possuisse informações necessárias além do comando ou diferentes
+        public override bool IsValid()
         {
-            ValidationResult = new RegisterClientCommandValidation().Validate(this);
+            ValidationResult = new RegisteredClientEventValidation().Validate(this);
             return ValidationResult.IsValid;
         }
     }
 
-    public class RegisterClientCommandValidation : AbstractValidator<RegisterClientCommand>
+    public class RegisteredClientEventValidation : AbstractValidator<RegisteredClientEvent>
     {
         public string IdErrorMessage => "Id cliente é inválido";
         public string NameErrorMessage => "Nome do cliente deve ser informado";
         public string CpfErrorMessage => "O CPF do cleinte deve ser válido";
         public string EmailErrorMessage => "O email do cleinte está em formato inválido";
-        public RegisterClientCommandValidation()
+        public RegisteredClientEventValidation()
         {
             RuleFor(x => x.Id)
                 .NotEqual(Guid.Empty)

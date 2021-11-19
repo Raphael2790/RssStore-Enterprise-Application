@@ -13,8 +13,8 @@ namespace RssSE.Client.API.Configuration
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "RssStore Enterprise Catalog API",
-                    Description = "Catalog API for others API's projects and webapps",
+                    Title = "RssStore Enterprise Client API",
+                    Description = "Client API for others API's projects and webapps",
                     Contact = new OpenApiContact { Email = "rssshev@enterprise.com", Name = "Raphael Silvestre" },
                     License = new OpenApiLicense { Name = "MIT", Url = new Uri("https://opensource.org/licenses/MIT") }
                 });

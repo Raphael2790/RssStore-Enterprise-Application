@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RssSE.Catalog.API.Models;
 using RssSE.Catalog.API.Models.Repositories;
+using RssSE.WebApi.Core.Controllers;
 using RssSE.WebApi.Core.Identity;
 using System;
 using System.Collections.Generic;
@@ -9,9 +10,8 @@ using System.Threading.Tasks;
 
 namespace RssSE.Catalog.API.Controllers
 {
-    [ApiController]
     [Authorize]
-    public class CatalogController : Controller
+    public class CatalogController : MainController
     {
         private readonly IProductRepository _productRepository;
         public CatalogController(IProductRepository productRepository)

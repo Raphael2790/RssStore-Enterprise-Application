@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation.Results;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RssSE.Identity.API.v1.Controllers
+namespace RssSE.WebApi.Core.Controllers
 {
     [ApiController]
     public class MainController : Controller
@@ -23,6 +24,13 @@ namespace RssSE.Identity.API.v1.Controllers
         {
             var modelErrors = modelState.Values.SelectMany(x => x.Errors);
             foreach (var error in modelErrors)
+                AddProcessError(error.ErrorMessage);
+            return CustomResponse();
+        }
+
+        protected ActionResult CustomResponse(ValidationResult validation)
+        {
+            foreach (var error in validation.Errors)
                 AddProcessError(error.ErrorMessage);
             return CustomResponse();
         }

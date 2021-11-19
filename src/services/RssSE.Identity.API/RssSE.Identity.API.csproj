@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="EasyNetQ" Version="6.3.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.17" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.17" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.11.1" />
@@ -15,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\building blocks\RssSE.Core\RssSE.Core.csproj" />
     <ProjectReference Include="..\..\building blocks\RssSE.WebApi.Core\RssSE.WebApi.Core.csproj" />
     <ProjectReference Include="..\RssSE.Identity.Data\RssSE.Identity.Data.csproj" />
   </ItemGroup>
