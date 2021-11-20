@@ -1,11 +1,12 @@
-﻿using EasyNetQ;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using RssSE.Core.Messages.Integration;
 using RssSE.Identity.API.Helpers;
 using RssSE.Identity.API.Models;
+using RssSE.MessageBus;
 using RssSE.WebApi.Core.Controllers;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace RssSE.Identity.API.v1.Controllers
@@ -16,13 +17,14 @@ namespace RssSE.Identity.API.v1.Controllers
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IUserLoginHelper _userLoginHelper;
-        private IBus _bus;
+        private readonly IMessageBus _bus;
 
-        public AuthController(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager, IUserLoginHelper userLoginHelper)
+        public AuthController(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager, IUserLoginHelper userLoginHelper, IMessageBus bus)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _userLoginHelper = userLoginHelper;
+            _bus = bus;
         }
 
         [HttpPost("nova-conta")]
@@ -38,24 +40,20 @@ namespace RssSE.Identity.API.v1.Controllers
             var result = await _userManager.CreateAsync(user, registerUser.Password);
             if (result.Succeeded)
             {
-                await RegisterCustomer(registerUser);
+                var customerRegistrationResult = await RegisterCustomer(registerUser);
+
+                if (!customerRegistrationResult.ValidationResult.IsValid)
+                {
+                    await _userManager.DeleteAsync(user);
+                    return CustomResponse(customerRegistrationResult.ValidationResult);
+                }
+
                 return CustomResponse(await _userLoginHelper.GenerateUserToken(registerUser.Email));
             }
 
-            foreach (var error in result.Errors)
-                AddProcessError(error.Description);
+            AddProcessErrors(result.Errors.Select(x => x.Description));
 
             return CustomResponse();
-        }
-
-        private async Task<ResponseMessage> RegisterCustomer(RegisterUserViewModel registerUser)
-        {
-            var user = await _userManager.FindByEmailAsync(registerUser.Email);
-            var registerCustomer = new RegisteredUserIntegrationEvent(Guid.Parse(user.Id), registerUser.Name, registerUser.Email,
-                registerUser.Cpf);
-            _bus = RabbitHutch.CreateBus("host=localhost:5672");
-            var success = await _bus.Rpc.RequestAsync<RegisteredUserIntegrationEvent, ResponseMessage>(registerCustomer);
-            return success;
         }
 
         [HttpPost("autenticar")]
@@ -71,6 +69,23 @@ namespace RssSE.Identity.API.v1.Controllers
             }
             AddProcessError("Usuário ou senha inválido");
             return CustomResponse();
+        }
+
+        private async Task<ResponseMessage> RegisterCustomer(RegisterUserViewModel registerUser)
+        {
+            var user = await _userManager.FindByEmailAsync(registerUser.Email);
+            var registerCustomer = new RegisteredUserIntegrationEvent(Guid.Parse(user.Id), registerUser.Name, registerUser.Email,
+                registerUser.Cpf);
+            try
+            {
+                var success = await _bus.RequestAsync<RegisteredUserIntegrationEvent, ResponseMessage>(registerCustomer);
+                return success;
+            }
+            catch
+            {
+                await _userManager.DeleteAsync(user);
+                throw;
+            }
         }
     }
 }

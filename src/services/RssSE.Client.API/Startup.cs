@@ -32,6 +32,7 @@ namespace RssSE.Client.API
             services.AddMediatR(typeof(Startup));
             services.AddApiConfiguration(Configuration);
             services.RegisterServices();
+            services.AddMessageBusConfiguration(Configuration);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

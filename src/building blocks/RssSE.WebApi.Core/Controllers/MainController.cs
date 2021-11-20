@@ -37,6 +37,13 @@ namespace RssSE.WebApi.Core.Controllers
 
         protected bool IsOperationValid() => !Errors.Any();
         protected void AddProcessError(string error) => Errors.Add(error);
+        protected void AddProcessErrors(IEnumerable<string> errors)
+        {
+            foreach (var error in errors)
+            {
+                Errors.Add(error);
+            }
+        }
         protected void ClearProcessErrors() => Errors.Clear();
     }
 }

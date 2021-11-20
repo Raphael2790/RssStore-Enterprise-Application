@@ -33,7 +33,7 @@ namespace RssSE.WebApp.MVC.Services
         {
             var registerContent = GetContent(registerUser);
             var response = await _httpClient.PostAsync($"/api/v1/auth/nova-conta", registerContent);
-            if (HasResponseError(response))
+            if (!HasResponseError(response))
                 return new UserLoginResponse
                 {
                     ResponseResult = await DeserializeResponse<ResponseResult>(response)

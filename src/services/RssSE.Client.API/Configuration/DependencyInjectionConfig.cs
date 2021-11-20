@@ -21,7 +21,6 @@ namespace RssSE.Client.API.Configuration
             services.AddScoped<INotificationHandler<RegisteredClientEvent>, ClientEventHandler>();
             services.AddScoped<ClientDbContext>();
             services.AddScoped<IClientRepository, ClientRepository>();
-            services.AddHostedService<RegisterCustomerIntegrationHandler>();
         }
     }
 }

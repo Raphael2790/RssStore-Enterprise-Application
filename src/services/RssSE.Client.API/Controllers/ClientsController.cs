@@ -3,8 +3,6 @@ using RssSE.Client.API.Application.Commands;
 using RssSE.Core.Mediator;
 using RssSE.WebApi.Core.Controllers;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace RssSE.Client.API.Controllers
