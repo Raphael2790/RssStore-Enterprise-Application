@@ -3,8 +3,9 @@ using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Polly;
+using RssSE.WebApi.Core.User;
+using RssSE.WebApi.Core.User.Interfaces;
 using RssSE.WebApp.MVC.Extensions;
-using RssSE.WebApp.MVC.Extensions.Interfaces;
 using RssSE.WebApp.MVC.Interfaces.Services;
 using RssSE.WebApp.MVC.Services;
 using RssSE.WebApp.MVC.Services.Handlers;
@@ -43,7 +44,7 @@ namespace RssSE.WebApp.MVC.Configuration
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-            services.AddScoped<IUser, AspNetUser>();
+            services.AddScoped<IAspNetUser, AspNetUser>();
         }
     }
 }

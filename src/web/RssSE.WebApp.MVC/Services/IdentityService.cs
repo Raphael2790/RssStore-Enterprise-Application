@@ -2,8 +2,6 @@
 using RssSE.WebApp.MVC.Models;
 using RssSE.WebApp.MVC.Services.Base;
 using System.Net.Http;
-using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace RssSE.WebApp.MVC.Services

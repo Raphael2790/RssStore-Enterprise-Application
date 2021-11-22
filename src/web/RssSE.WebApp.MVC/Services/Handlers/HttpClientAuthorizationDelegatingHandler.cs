@@ -1,4 +1,4 @@
-﻿using RssSE.WebApp.MVC.Extensions.Interfaces;
+﻿using RssSE.WebApi.Core.User.Interfaces;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -9,8 +9,8 @@ namespace RssSE.WebApp.MVC.Services.Handlers
 {
     public class HttpClientAuthorizationDelegatingHandler : DelegatingHandler
     {
-        private readonly IUser _user;
-        public HttpClientAuthorizationDelegatingHandler(IUser user)
+        private readonly IAspNetUser _user;
+        public HttpClientAuthorizationDelegatingHandler(IAspNetUser user)
         {
             _user = user;
         }

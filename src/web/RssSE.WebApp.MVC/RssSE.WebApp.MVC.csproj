@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\building blocks\RssSE.Core\RssSE.Core.csproj" />
+    <ProjectReference Include="..\..\building blocks\RssSE.WebApi.Core\RssSE.WebApi.Core.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
-using RssSE.WebApp.MVC.Extensions.Interfaces;
+using RssSE.WebApi.Core.User.Extensions;
+using RssSE.WebApi.Core.User.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 
-namespace RssSE.WebApp.MVC.Extensions
+namespace RssSE.WebApi.Core.User
 {
-    public class AspNetUser : IUser
+    public class AspNetUser : IAspNetUser
     {
         private readonly IHttpContextAccessor _acessor;
 

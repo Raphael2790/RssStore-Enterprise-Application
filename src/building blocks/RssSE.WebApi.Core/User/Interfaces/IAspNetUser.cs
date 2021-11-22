@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 
-namespace RssSE.WebApp.MVC.Extensions.Interfaces
+namespace RssSE.WebApi.Core.User.Interfaces
 {
-    public interface IUser
+    public interface IAspNetUser
     {
         string Name { get; }
         Guid GetUserId();

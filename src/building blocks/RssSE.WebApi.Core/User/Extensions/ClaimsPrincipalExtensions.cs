@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Security.Claims;
 
-namespace RssSE.WebApp.MVC.Extensions
+namespace RssSE.WebApi.Core.User.Extensions
 {
     public static class ClaimsPrincipalExtensions
     {
