@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FluentValidation.Results;
+using Microsoft.EntityFrameworkCore;
 using RssSE.Cart.API.Models;
 using System.Linq;
 
@@ -13,7 +14,7 @@ namespace RssSE.Cart.API.Data
         }
 
         public DbSet<CartItem> CartItems { get; set; }
-        public DbSet<ClientCart> ClientCarts { get; set; }
+        public DbSet<CustomerCart> ClientCarts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -22,6 +23,8 @@ namespace RssSE.Cart.API.Data
 
             foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
                 relationship.DeleteBehavior = DeleteBehavior.ClientSetNull;
+
+            modelBuilder.Ignore<ValidationResult>();
 
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(CartDbContext).Assembly);
         }

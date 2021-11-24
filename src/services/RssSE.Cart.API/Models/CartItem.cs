@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using System;
+using System.Text.Json.Serialization;
 
 namespace RssSE.Cart.API.Models
 {
@@ -13,7 +14,8 @@ namespace RssSE.Cart.API.Models
         public string Image { get; set; }
         public Guid CartId { get; set; }
 
-        public ClientCart ClientCart { get; set; }
+        [JsonIgnore]
+        public CustomerCart ClientCart { get; set; }
 
         public CartItem()
         {
@@ -28,23 +30,25 @@ namespace RssSE.Cart.API.Models
         internal void AddQuantity(int quantity) => Quantity += quantity;
 
         internal bool IsValid() => new CartItemValidation().Validate(this).IsValid;
+
+        internal void UpdateQuantity(int quantity) => Quantity = quantity;
     }
 
     public class CartItemValidation : AbstractValidator<CartItem>
     {
-        public readonly string ProductIdErrorMsg = "O id do produto está inválido";
+        public string ProductIdErrorMsg(string itemName) => $"O id do produto do item {itemName} está inválido";
         public readonly string ProductNameErrorMsg = "O nome do produto está inválido";
-        public readonly string ItemMinimumQuantityErrorMsg = "A quantidade mínima do item é 1";
-        public readonly string ItemMaximumQuantityErrorMsg = $"A quantidade máxima do item é {ClientCart.MAX_QUANTITY_ITEM}";
-        public readonly string ItemMinimumValueErrorMsg = "O valor mínimo de um item deve ser maior que 0";
+        public string ItemMinimumQuantityErrorMsg(string itemName) => $"A quantidade mínima do {itemName} é 1";
+        public string ItemMaximumQuantityErrorMsg(string itemName) => $"A quantidade máxima do {itemName} é {CustomerCart.MAX_QUANTITY_ITEM}";
+        public string ItemMinimumValueErrorMsg(string itemName) => $"O valor mínimo do {itemName} deve ser maior que 0";
 
         public CartItemValidation()
         {
             RuleFor(c => c.ProductId)
                 .NotEqual(Guid.Empty)
-                .WithMessage(ProductIdErrorMsg)
+                .WithMessage(item => ProductIdErrorMsg(item.Name))
                 .NotNull()
-                .WithMessage(ProductIdErrorMsg);
+                .WithMessage(item => ProductIdErrorMsg(item.Name));
 
             RuleFor(c => c.Name)
                 .NotNull()
@@ -53,16 +57,16 @@ namespace RssSE.Cart.API.Models
                 .WithMessage(ProductNameErrorMsg);
 
             RuleFor(c => c.Quantity)
-                .GreaterThan(0)
-                .WithMessage(ItemMinimumQuantityErrorMsg);
+                .GreaterThan(default(int))
+                .WithMessage(item => ItemMinimumQuantityErrorMsg(item.Name));
 
             RuleFor(c => c.Quantity)
-                .LessThan(ClientCart.MAX_QUANTITY_ITEM)
-                .WithMessage(ItemMaximumQuantityErrorMsg);
+                .LessThanOrEqualTo(CustomerCart.MAX_QUANTITY_ITEM)
+                .WithMessage(item => ItemMaximumQuantityErrorMsg(item.Name));
 
             RuleFor(c => c.UnitValue)
-                .GreaterThan(0)
-                .WithMessage(ItemMinimumValueErrorMsg);
+                .GreaterThan(decimal.Zero)
+                .WithMessage(item => ItemMinimumValueErrorMsg(item.Name));
         }
     }
 }

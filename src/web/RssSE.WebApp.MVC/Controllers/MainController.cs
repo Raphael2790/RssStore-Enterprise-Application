@@ -23,5 +23,9 @@ namespace RssSE.WebApp.MVC.Controllers
             foreach (var message in messages)
                 ModelState.AddModelError(string.Empty, message);
         }
+
+        protected void AddValidationError(string message) => ModelState.AddModelError(string.Empty, message);
+
+        protected bool IsValidOperation() => ModelState.ErrorCount == 0;
     }
 }

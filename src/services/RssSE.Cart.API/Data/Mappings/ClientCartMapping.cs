@@ -4,9 +4,9 @@ using RssSE.Cart.API.Models;
 
 namespace RssSE.Cart.API.Data.Mappings
 {
-    public class ClientCartMapping : IEntityTypeConfiguration<ClientCart>
+    public class ClientCartMapping : IEntityTypeConfiguration<CustomerCart>
     {
-        public void Configure(EntityTypeBuilder<ClientCart> builder)
+        public void Configure(EntityTypeBuilder<CustomerCart> builder)
         {
             builder.ToTable("ClientsCarts");
 

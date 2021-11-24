@@ -9,6 +9,8 @@ namespace RssSE.WebApi.Core.User.Extensions
         {
             if (claimsPrincipal is null) throw new ArgumentNullException(nameof(claimsPrincipal));
             var claim = claimsPrincipal.FindFirst("sub");
+            if (claim is null)
+                claim = claimsPrincipal.FindFirst(c => c.Type.Contains("nameidentifier"));
             return claim?.Value;
         }
 
@@ -16,6 +18,8 @@ namespace RssSE.WebApi.Core.User.Extensions
         {
             if (claimsPrincipal is null) throw new ArgumentNullException(nameof(claimsPrincipal));
             var claim = claimsPrincipal.FindFirst("email");
+            if (claim is null)
+                claim = claimsPrincipal.FindFirst(c => c.Type.Contains("emailaddress"));
             return claim?.Value;
         }
 

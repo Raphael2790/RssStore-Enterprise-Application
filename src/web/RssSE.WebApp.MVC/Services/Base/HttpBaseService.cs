@@ -1,4 +1,5 @@
 ﻿using RssSE.WebApp.MVC.Extensions;
+using RssSE.WebApp.MVC.Models;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -38,5 +39,7 @@ namespace RssSE.WebApp.MVC.Services.Base
 
         protected async Task<T> DeserializeResponse<T>(HttpResponseMessage responseMessage) =>
              JsonSerializer.Deserialize<T>(await responseMessage.Content.ReadAsStringAsync(), _options);
+
+        protected ResponseResult OkReturn() => new ResponseResult();
     }
 }

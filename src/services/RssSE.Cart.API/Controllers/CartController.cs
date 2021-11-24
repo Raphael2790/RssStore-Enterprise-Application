@@ -6,6 +6,7 @@ using RssSE.Cart.API.Models;
 using RssSE.WebApi.Core.Controllers;
 using RssSE.WebApi.Core.User.Interfaces;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace RssSE.Cart.API.Controllers
@@ -21,11 +22,11 @@ namespace RssSE.Cart.API.Controllers
             _context = context;
         }
 
-        [HttpGet("carinho")]
-        public async Task<ClientCart> GetCart() => await GetClientCart() ?? new ClientCart(_user.GetUserId());
+        [HttpGet("carrinho")]
+        public async Task<CustomerCart> GetCart() => await GetClientCart() ?? new CustomerCart(_user.GetUserId());
 
         [HttpPost("carrinho")]
-        public async Task<IActionResult> AddCartItem(CartItem cartItem)
+        public async Task<IActionResult> AddItem(CartItem cartItem)
         {
             var clientCart = await GetClientCart();
             if (clientCart is null)
@@ -37,10 +38,51 @@ namespace RssSE.Cart.API.Controllers
             return CustomResponse();
         }
 
-        private void ManipulateExistingCart(ClientCart cart, CartItem cartItem)
+        [HttpPut("carrinho/{productId:guid}")]
+        public async Task<IActionResult> UpdateItem(Guid productId, CartItem item)
+        {
+            var cart = await GetClientCart();
+            var cartItem = await GetValidCartItem(productId, cart, item);
+            if (cartItem is null) return CustomResponse();
+            cart.UpdateQuantity(cartItem, item.Quantity);
+            ValidateCart(cart);
+            if (!IsOperationValid()) return CustomResponse();
+            _context.CartItems.Update(cartItem);
+            _context.ClientCarts.Update(cart);
+            await Commit();
+            return CustomResponse();
+        }
+
+        [HttpDelete("carrinho/{productId:guid}")]
+        public async Task<IActionResult> RemoveItem(Guid productId)
+        {
+            var cart = await GetClientCart();
+            var cartItem = await GetValidCartItem(productId,cart);
+            if (cartItem is null) return CustomResponse();
+            ValidateCart(cart);
+            if (!IsOperationValid()) return CustomResponse();
+            cart.RemoveItem(cartItem);
+            _context.CartItems.Remove(cartItem);
+            _context.ClientCarts.Update(cart);
+            await Commit();
+            return CustomResponse();
+        }
+
+        private async Task<CustomerCart> GetClientCart() =>
+            await _context.ClientCarts.Include(c => c.CartItems)
+            .FirstOrDefaultAsync(c => c.ClientId == _user.GetUserId());
+
+        private async Task Commit()
+        {
+            var result = await _context.SaveChangesAsync();
+            if (result <= 0) AddProcessError("Não foi possível persistir os dados no banco");
+        }
+
+        private void ManipulateExistingCart(CustomerCart cart, CartItem cartItem)
         {
             var itemExistsInCart = cart.ItemExistsInCart(cartItem);
             cart.AddItem(cartItem);
+            ValidateCart(cart);
             if (itemExistsInCart)
                 _context.CartItems.Update(cart.GetItemByProductId(cartItem.ProductId));
             else
@@ -50,31 +92,43 @@ namespace RssSE.Cart.API.Controllers
 
         private void ManipulateNewCart(CartItem cartItem)
         {
-            var cart = new ClientCart(_user.GetUserId());
+            var cart = new CustomerCart(_user.GetUserId());
             cart.AddItem(cartItem);
+            ValidateCart(cart);
             _context.ClientCarts.Add(cart);
         }
 
-        [HttpPut("carrinho/{productId:guid}")]
-        public async Task<IActionResult> UpdateCartItem(Guid productId)
+        private async Task<CartItem> GetValidCartItem(Guid productId, CustomerCart cart, CartItem item = null)
         {
-            return CustomResponse();
+            if(item != null && productId != item.ProductId)
+            {
+                AddProcessError("O item não corresponde ao informado!");
+                return null;
+            }
+
+            if(cart is null)
+            {
+                AddProcessError("Carrinho não encontrado!");
+                return null;
+            }
+
+            var cartItem = await _context.CartItems
+                .FirstOrDefaultAsync(x => x.ProductId == productId && x.CartId == cart.Id);
+
+            if(cartItem is null || !cart.ItemExistsInCart(cartItem))
+            {
+                AddProcessError("O item não está no carrinho!");
+                return null;
+            }
+
+            return cartItem;
         }
 
-        [HttpDelete("carrinho/{productId:guid}")]
-        public async Task<IActionResult> RemoveCartItem(Guid productId)
+        private bool ValidateCart(CustomerCart cart)
         {
-            return CustomResponse();
-        }
-
-        private async Task<ClientCart> GetClientCart() =>
-            await _context.ClientCarts.Include(c => c.CartItems)
-            .FirstOrDefaultAsync(c => c.ClientId == _user.GetUserId());
-
-        private async Task Commit()
-        {
-            var result = await _context.SaveChangesAsync();
-            if (result <= 0) AddProcessError("Não foi possível persistir os dados no banco");
+            if (cart.IsValid()) return true;
+            cart.ValidationResult.Errors.ToList().ForEach(e => AddProcessError(e.ErrorMessage));
+            return false;
         }
     }
 }

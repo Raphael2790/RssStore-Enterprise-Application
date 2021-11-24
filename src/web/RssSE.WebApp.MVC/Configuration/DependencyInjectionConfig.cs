@@ -19,6 +19,8 @@ namespace RssSE.WebApp.MVC.Configuration
         public static void RegisterServices(this IServiceCollection services, IConfiguration configuration)
         {
             //Attribute Data Annotation
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddScoped<IAspNetUser, AspNetUser>();
             services.AddSingleton<IValidationAttributeAdapterProvider, CpfValidationAttributeAdapterProvider>();
 
             services.AddTransient<HttpClientAuthorizationDelegatingHandler>();
@@ -26,8 +28,8 @@ namespace RssSE.WebApp.MVC.Configuration
             services.AddHttpClient<IIdentityService, IdentityService>(client => 
             {
                 client.BaseAddress = new Uri(configuration.GetSection("IdentityBaseServiceUrl").Value);
-            })
-                .AddTransientHttpErrorPolicy(p => p.WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(2)));
+            }).AddPolicyHandler(PollyExtensions.RetryAsyncWithThreeAttemptsAndLogging())
+              .AddPolicyHandler(PollyExtensions.CircuitBreakAfterThreeAttempts());;
 
             services.AddHttpClient<ICatalogService, CatalogService>(client =>
             {
@@ -36,15 +38,20 @@ namespace RssSE.WebApp.MVC.Configuration
               .AddPolicyHandler(PollyExtensions.RetryAsyncWithThreeAttemptsAndLogging())
               .AddPolicyHandler(PollyExtensions.CircuitBreakAfterThreeAttempts());
 
+            services.AddHttpClient<ICartService, CartService>(client => 
+            {
+                client.BaseAddress = new Uri(configuration.GetSection("CarrinhoBaseServiceUrl").Value);
+            }).AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
+              .AddPolicyHandler(PollyExtensions.RetryAsyncWithThreeAttemptsAndLogging())
+              .AddPolicyHandler(PollyExtensions.CircuitBreakAfterThreeAttempts());
+
+            #region RefitExample
             //services.AddHttpClient("Refit", client =>
             //{
             //    client.BaseAddress = new Uri(configuration.GetSection("CatalogBaseServiceUrl").Value);
             //}).AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
             //   .AddTypedClient(Refit.RestService.For<ICatalogServiceRefit>);
-
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
-            services.AddScoped<IAspNetUser, AspNetUser>();
+            #endregion
         }
     }
 }
