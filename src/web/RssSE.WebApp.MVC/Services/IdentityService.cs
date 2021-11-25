@@ -1,4 +1,5 @@
-﻿using RssSE.WebApp.MVC.Interfaces.Services;
+﻿using RssSE.Core.Communication;
+using RssSE.WebApp.MVC.Interfaces.Services;
 using RssSE.WebApp.MVC.Models;
 using RssSE.WebApp.MVC.Services.Base;
 using System.Net.Http;

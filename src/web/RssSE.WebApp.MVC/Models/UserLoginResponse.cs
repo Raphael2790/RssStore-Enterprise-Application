@@ -1,4 +1,6 @@
-﻿namespace RssSE.WebApp.MVC.Models
+﻿using RssSE.Core.Communication;
+
+namespace RssSE.WebApp.MVC.Models
 {
     public class UserLoginResponse
     {

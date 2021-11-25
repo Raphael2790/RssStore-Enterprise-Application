@@ -33,7 +33,7 @@ namespace RssSE.Cart.API.Controllers
                 ManipulateNewCart(cartItem);
             else
                 ManipulateExistingCart(clientCart, cartItem);
-            if (!IsOperationValid()) return CustomResponse();
+            if (!IsValidOperation()) return CustomResponse();
             await Commit();
             return CustomResponse();
         }
@@ -46,7 +46,7 @@ namespace RssSE.Cart.API.Controllers
             if (cartItem is null) return CustomResponse();
             cart.UpdateQuantity(cartItem, item.Quantity);
             ValidateCart(cart);
-            if (!IsOperationValid()) return CustomResponse();
+            if (!IsValidOperation()) return CustomResponse();
             _context.CartItems.Update(cartItem);
             _context.ClientCarts.Update(cart);
             await Commit();
@@ -60,7 +60,7 @@ namespace RssSE.Cart.API.Controllers
             var cartItem = await GetValidCartItem(productId,cart);
             if (cartItem is null) return CustomResponse();
             ValidateCart(cart);
-            if (!IsOperationValid()) return CustomResponse();
+            if (!IsValidOperation()) return CustomResponse();
             cart.RemoveItem(cartItem);
             _context.CartItems.Remove(cartItem);
             _context.ClientCarts.Update(cart);

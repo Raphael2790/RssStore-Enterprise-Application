@@ -5,13 +5,13 @@ using Polly.Retry;
 using System;
 using System.Net.Http;
 
-namespace RssSE.WebApp.MVC.Extensions
+namespace RssSE.WebApi.Core.Extensions
 {
     public static class PollyExtensions
     {
         public static AsyncRetryPolicy<HttpResponseMessage> RetryAsyncWithThreeAttemptsAndLogging()
         {
-            return  HttpPolicyExtensions
+            return HttpPolicyExtensions
                             .HandleTransientHttpError()
                             .WaitAndRetryAsync(new[]
                             {

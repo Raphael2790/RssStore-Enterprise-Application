@@ -1,4 +1,5 @@
-﻿using RssSE.WebApp.MVC.Models;
+﻿using RssSE.Core.Communication;
+using RssSE.WebApp.MVC.Models;
 using System;
 using System.Threading.Tasks;
 

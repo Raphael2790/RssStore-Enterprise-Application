@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace RssSE.WebApp.MVC.Models
+namespace RssSE.Core.Communication
 {
     public class ResponseResult
     {

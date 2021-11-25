@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using RssSE.Core.Communication;
 using RssSE.WebApp.MVC.Models;
 using System.Collections.Generic;
 using System.Linq;
