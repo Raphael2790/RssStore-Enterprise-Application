@@ -11,5 +11,6 @@ namespace RssSE.Bff.Purchases.Services.Interfaces
         Task<ResponseResult> AddItemInCart(CartItemDTO cartItem);
         Task<ResponseResult> UpdateItemInCart(Guid productId, CartItemDTO cartItem);
         Task<ResponseResult> RemoveItemInCart(Guid productId);
+        Task<ResponseResult> ApplyVoucherOnCart(VoucherDTO voucher);
     }
 }

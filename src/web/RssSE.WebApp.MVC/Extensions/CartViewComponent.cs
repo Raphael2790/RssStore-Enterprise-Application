@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using RssSE.WebApp.MVC.Models;
 using RssSE.WebApp.MVC.Services.Interfaces;
 using System.Threading.Tasks;
 
@@ -7,15 +6,15 @@ namespace RssSE.WebApp.MVC.Extensions
 {
     public class CartViewComponent : ViewComponent
     {
-        private readonly ICartService _cartService;
-        public CartViewComponent(ICartService cartService)
+        private readonly IPurchasesBffService _purchasesBffService;
+        public CartViewComponent(IPurchasesBffService purchasesBffService)
         {
-            _cartService = cartService;
+            _purchasesBffService = purchasesBffService;
         }
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            return View(await _cartService.GetCart() ?? new CartViewModel());
+            return View(await _purchasesBffService.GetCartItemsAmount());
         }
     }
 }

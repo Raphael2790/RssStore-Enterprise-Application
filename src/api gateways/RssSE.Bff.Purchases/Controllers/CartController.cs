@@ -14,11 +14,13 @@ namespace RssSE.Bff.Purchases.Controllers
     {
         private readonly ICartService _cartService;
         private readonly ICatalogService _catalogService;
+        private readonly IOrderService _orderService;
 
-        public CartController(ICartService cartService, ICatalogService catalogService)
+        public CartController(ICartService cartService, ICatalogService catalogService, IOrderService orderService)
         {
             _cartService = cartService;
             _catalogService = catalogService;
+            _orderService = orderService;
         }
 
         [HttpGet("compras/carrinho")]
@@ -67,6 +69,19 @@ namespace RssSE.Bff.Purchases.Controllers
             return CustomResponse(response);
         }
 
+        [HttpPost("compras/carrinho/aplicar-voucher")]
+        public async Task<IActionResult> ApplyVoucher([FromBody] string code)
+        {
+            var voucher = await _orderService.GetVoucherByCode(code);
+            if(voucher is null)
+            {
+                AddProcessError("Voucher inválido ou inexistente");
+                return CustomResponse();
+            }
+            var response = await _cartService.ApplyVoucherOnCart(voucher);
+            return CustomResponse(response);
+        } 
+        
         private async Task ValidateCartItem(ItemProductDTO product, int quantity)
         {
             if (product is null) AddProcessError("Produto inexistente!");

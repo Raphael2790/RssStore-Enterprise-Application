@@ -6,10 +6,13 @@ namespace RssSE.WebApp.MVC.Models
     public class CartViewModel
     {
         public decimal TotalValue { get; set; }
-        public List<ProductItemViewModel> CartItems { get; set; } = new List<ProductItemViewModel>();
+        public VoucherViewModel Voucher { get; set; }
+        public bool VoucherApplyed { get; set; }
+        public decimal Discount { get; set; }
+        public List<CartItemViewModel> CartItems { get; set; } = new List<CartItemViewModel>();
     }
 
-    public class ProductItemViewModel
+    public class CartItemViewModel
     {
         public Guid ProductId { get; set; }
         public string Name { get; set; }

@@ -51,7 +51,7 @@ namespace RssSE.Cart.API.Migrations
                     b.ToTable("CartItems");
                 });
 
-            modelBuilder.Entity("RssSE.Cart.API.Models.ClientCart", b =>
+            modelBuilder.Entity("RssSE.Cart.API.Models.CustomerCart", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -60,8 +60,14 @@ namespace RssSE.Cart.API.Migrations
                     b.Property<Guid>("ClientId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<decimal>("Discount")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal>("TotalValue")
                         .HasColumnType("decimal(10,2)");
+
+                    b.Property<bool>("VoucherApplyed")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -73,10 +79,42 @@ namespace RssSE.Cart.API.Migrations
 
             modelBuilder.Entity("RssSE.Cart.API.Models.CartItem", b =>
                 {
-                    b.HasOne("RssSE.Cart.API.Models.ClientCart", "ClientCart")
+                    b.HasOne("RssSE.Cart.API.Models.CustomerCart", "ClientCart")
                         .WithMany("CartItems")
                         .HasForeignKey("CartId")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("RssSE.Cart.API.Models.CustomerCart", b =>
+                {
+                    b.OwnsOne("RssSE.Cart.API.Models.Voucher", "Voucher", b1 =>
+                        {
+                            b1.Property<Guid>("CustomerCartId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("Code")
+                                .HasColumnName("VoucherCode")
+                                .HasColumnType("varchar(50)");
+
+                            b1.Property<decimal?>("DiscountValue")
+                                .HasColumnName("DiscountValue")
+                                .HasColumnType("decimal(10,2)");
+
+                            b1.Property<decimal?>("Percentage")
+                                .HasColumnName("Percentage")
+                                .HasColumnType("decimal(10,2)");
+
+                            b1.Property<int>("VoucherType")
+                                .HasColumnName("DiscountType")
+                                .HasColumnType("int");
+
+                            b1.HasKey("CustomerCartId");
+
+                            b1.ToTable("ClientsCarts");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CustomerCartId");
+                        });
                 });
 #pragma warning restore 612, 618
         }

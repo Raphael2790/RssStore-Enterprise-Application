@@ -27,6 +27,14 @@ namespace RssSE.Bff.Purchases.Services
             return OkReturn();
         }
 
+        public async Task<ResponseResult> ApplyVoucherOnCart(VoucherDTO voucher)
+        {
+            var itemContent = GetContent(voucher);
+            var response = await _client.PostAsync("/carrinho/aplicar-voucher/", itemContent);
+            if (!HasResponseError(response)) return await DeserializeResponse<ResponseResult>(response);
+            return OkReturn();
+        }
+
         public async Task<CartDTO> GetCart()
         {
             var response = await _client.GetAsync("/carrinho");

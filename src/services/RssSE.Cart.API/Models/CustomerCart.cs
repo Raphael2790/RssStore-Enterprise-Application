@@ -14,7 +14,11 @@ namespace RssSE.Cart.API.Models
         public Guid ClientId { get; set; }
         public decimal TotalValue { get; set; }
         public List<CartItem> CartItems { get; set; }
+        public bool VoucherApplyed { get; set; }
+        public decimal Discount { get; set; }
         public ValidationResult ValidationResult { get; set; }
+
+        public Voucher Voucher { get; set; }
 
         public CustomerCart(Guid clientId)
         {
@@ -25,7 +29,45 @@ namespace RssSE.Cart.API.Models
 
         protected CustomerCart() { }
 
-        internal void CalculateCartTotal() => TotalValue = CartItems.Sum(c => c.CalculateItemValue());
+        public void ApplyVoucher(Voucher voucher)
+        {
+            Voucher = voucher;
+            VoucherApplyed = true;
+            CalculateCartTotal();
+        }
+
+        internal void CalculateCartTotal() 
+        {
+            TotalValue = CartItems.Sum(c => c.CalculateItemValue());
+            CalculateTotalDiscount();
+        } 
+
+        private void CalculateTotalDiscount()
+        {
+            if (!VoucherApplyed) return;
+            decimal discount = 0;
+            var totalValue = TotalValue;
+
+            if(Voucher.VoucherType == VoucherType.Percentage)
+            {
+                if (Voucher.Percentage.HasValue)
+                {
+                    discount = (totalValue * Voucher.Percentage.Value) * 100;
+                    totalValue -= discount;
+                }
+            }
+            else
+            {
+                if (Voucher.DiscountValue.HasValue)
+                {
+                    discount = Voucher.DiscountValue.Value;
+                    totalValue -= discount;
+                }
+            }
+
+            TotalValue = totalValue < 0 ? 0 : totalValue;
+            Discount = discount;
+        }
 
         internal bool ItemExistsInCart(CartItem item) => CartItems.Any(x => x.ProductId == item.ProductId);
 

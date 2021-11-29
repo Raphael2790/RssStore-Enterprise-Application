@@ -72,6 +72,16 @@ namespace RssSE.Cart.API.Controllers
             await _context.ClientCarts.Include(c => c.CartItems)
             .FirstOrDefaultAsync(c => c.ClientId == _user.GetUserId());
 
+        [HttpPost("carrinho/aplicar-voucher")]
+        public async Task<IActionResult> ApplyVoucher(Voucher voucher)
+        {
+            var cart = await GetCart();
+            cart.ApplyVoucher(voucher);
+            _context.ClientCarts.Update(cart);
+            await Commit();
+            return CustomResponse();
+        }
+
         private async Task Commit()
         {
             var result = await _context.SaveChangesAsync();

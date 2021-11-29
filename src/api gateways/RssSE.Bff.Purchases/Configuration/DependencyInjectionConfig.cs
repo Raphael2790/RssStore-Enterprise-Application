@@ -13,6 +13,7 @@ namespace RssSE.Bff.Purchases.Configuration
     {
         public static void RegisterServices(this IServiceCollection services)
         {
+            //API
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IAspNetUser, AspNetUser>();
 
@@ -27,6 +28,11 @@ namespace RssSE.Bff.Purchases.Configuration
               .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
               .AddPolicyHandler(PollyExtensions.RetryAsyncWithThreeAttemptsAndLogging())
               .AddPolicyHandler(PollyExtensions.CircuitBreakAfterThreeAttempts());
+
+            services.AddHttpClient<IOrderService, OrderService>()
+             .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
+             .AddPolicyHandler(PollyExtensions.RetryAsyncWithThreeAttemptsAndLogging())
+             .AddPolicyHandler(PollyExtensions.CircuitBreakAfterThreeAttempts());
         }
     }
 }

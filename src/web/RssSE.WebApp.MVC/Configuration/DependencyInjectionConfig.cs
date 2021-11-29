@@ -38,9 +38,9 @@ namespace RssSE.WebApp.MVC.Configuration
               .AddPolicyHandler(PollyExtensions.RetryAsyncWithThreeAttemptsAndLogging())
               .AddPolicyHandler(PollyExtensions.CircuitBreakAfterThreeAttempts());
 
-            services.AddHttpClient<ICartService, CartService>(client => 
+            services.AddHttpClient<IPurchasesBffService, PurchasesBffService>(client => 
             {
-                client.BaseAddress = new Uri(configuration.GetSection("CarrinhoBaseServiceUrl").Value);
+                client.BaseAddress = new Uri(configuration.GetSection("PurchasesBffUrl").Value);
             }).AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
               .AddPolicyHandler(PollyExtensions.RetryAsyncWithThreeAttemptsAndLogging())
               .AddPolicyHandler(PollyExtensions.CircuitBreakAfterThreeAttempts());
