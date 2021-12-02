@@ -5,8 +5,10 @@ using RssSE.Core.Mediator;
 using RssSE.Core.Messages;
 using RssSE.Order.Domain.Entities;
 using RssSE.Order.Infra.Data.Extensions;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
+using CustomerOrder = RssSE.Order.Domain.Entities.Order;
 
 namespace RssSE.Order.Infra.Data.Context
 {
@@ -19,6 +21,8 @@ namespace RssSE.Order.Infra.Data.Context
             _mediator = mediator;
         }
 
+        public DbSet<CustomerOrder> Orders { get; set; }
+        public DbSet<OrderItem> OrdersItems { get; set; }
         public DbSet<Voucher> Vouchers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -30,10 +34,26 @@ namespace RssSE.Order.Infra.Data.Context
             modelBuilder.Ignore<Event>();
             modelBuilder.Ignore<ValidationResult>();
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(OrdersDbContext).Assembly);
+
+            foreach (var relationShip in modelBuilder.Model.GetEntityTypes().SelectMany(x => x.GetForeignKeys()))
+                relationShip.DeleteBehavior = DeleteBehavior.ClientSetNull;
+
+            modelBuilder.HasSequence<int>("MySequence").StartsAt(1000).IncrementsBy(1);
+            base.OnModelCreating(modelBuilder);
         }
 
         public async Task<bool> Commit()
         {
+            foreach (var entry in ChangeTracker.Entries()
+                .Where(e => e.Entity.GetType().GetProperty("RegisterDate") != null))
+            {
+                if (entry.State == EntityState.Added)
+                    entry.Property("RegisterDate").CurrentValue = DateTime.Now;
+
+                if (entry.State == EntityState.Modified)
+                    entry.Property("RegisterDate").IsModified = false;
+            }
+
             var success = await base.SaveChangesAsync() > 0;
             if (success)
                 await _mediator.PublishEvents(this);

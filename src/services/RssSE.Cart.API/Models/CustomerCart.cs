@@ -52,7 +52,7 @@ namespace RssSE.Cart.API.Models
             {
                 if (Voucher.Percentage.HasValue)
                 {
-                    discount = (totalValue * Voucher.Percentage.Value) * 100;
+                    discount = (totalValue * Voucher.Percentage.Value) / 100;
                     totalValue -= discount;
                 }
             }

@@ -31,6 +31,14 @@ namespace RssSE.Order.Domain.Entities
             Applyed = true;
             Active = false;
             Amount = 0;
+            ApplyedDate = DateTime.Now;
+        }
+
+        public void DebitAmount()
+        {
+            Amount -= 1;
+            if (Amount >= 1) return;
+            MakeApplyed();
         }
     }
 

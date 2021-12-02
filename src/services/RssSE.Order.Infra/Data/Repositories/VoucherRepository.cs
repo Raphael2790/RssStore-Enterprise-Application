@@ -21,5 +21,7 @@ namespace RssSE.Order.Infra.Data.Repositories
 
         public async Task<Voucher> GetVoucherByCode(string code) =>
             await _context.Vouchers.FirstOrDefaultAsync(v => v.Code == code);
+
+        public void Update(Voucher voucher) => _context.Vouchers.Update(voucher);
     }
 }

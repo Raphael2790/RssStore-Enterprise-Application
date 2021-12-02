@@ -27,7 +27,7 @@ namespace RssSE.Order.API.Controllers
         public async Task<IActionResult> GetByCode(string code)
         {
             if (string.IsNullOrEmpty(code)) return NotFound();
-            var voucher = _voucherQuery.GetVoucherByCode(code);
+            var voucher = await _voucherQuery.GetVoucherByCode(code);
             return voucher is null ? NotFound() : CustomResponse(voucher);
         }
     }
