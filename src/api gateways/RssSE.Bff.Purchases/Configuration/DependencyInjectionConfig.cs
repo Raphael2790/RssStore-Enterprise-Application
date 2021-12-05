@@ -33,6 +33,11 @@ namespace RssSE.Bff.Purchases.Configuration
              .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
              .AddPolicyHandler(PollyExtensions.RetryAsyncWithThreeAttemptsAndLogging())
              .AddPolicyHandler(PollyExtensions.CircuitBreakAfterThreeAttempts());
+
+            services.AddHttpClient<ICustomerService, CustomerService>()
+             .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
+             .AddPolicyHandler(PollyExtensions.RetryAsyncWithThreeAttemptsAndLogging())
+             .AddPolicyHandler(PollyExtensions.CircuitBreakAfterThreeAttempts());
         }
     }
 }

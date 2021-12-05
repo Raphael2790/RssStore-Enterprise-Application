@@ -3,6 +3,7 @@ using RssSE.WebApp.MVC.Models;
 using RssSE.WebApp.MVC.Services.Base;
 using RssSE.WebApp.MVC.Services.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -32,6 +33,14 @@ namespace RssSE.WebApp.MVC.Services
             return OkReturn();
         }
 
+        public async Task<ResponseResult> FinishOrder(OrderTransactionViewModel orderTransaction)
+        {
+            var content = GetContent(orderTransaction);
+            var response = await _client.PostAsync("/compras/pedido/", content);
+            if (!HasResponseError(response)) return await DeserializeResponse<ResponseResult>(response);
+            return OkReturn();
+        }
+
         public async Task<CartViewModel> GetCart()
         {
             var response = await _client.GetAsync("compras/carrinho");
@@ -44,6 +53,20 @@ namespace RssSE.WebApp.MVC.Services
             var response = await _client.GetAsync("/compras/carrinho-quantidade");
             HasResponseError(response);
             return await DeserializeResponse<int>(response);
+        }
+
+        public async Task<OrderViewModel> GetLastOrder()
+        {
+            var response = await _client.GetAsync("/compras/pedidos/ultimo");
+            HasResponseError(response);
+            return await DeserializeResponse<OrderViewModel>(response);
+        }
+
+        public async Task<IEnumerable<OrderViewModel>> GetListByCustomerId()
+        {
+            var response = await _client.GetAsync("/compras/pedido/lista-cliente");
+            HasResponseError(response);
+            return await DeserializeResponse<IEnumerable<OrderViewModel>>(response);
         }
 
         public OrderTransactionViewModel MapToOrder(CartViewModel cart, AddressViewModel address)

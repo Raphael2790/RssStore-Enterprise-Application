@@ -1,20 +1,24 @@
 ﻿using RssSE.Core.Validation;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace RssSE.WebApp.MVC.Models
+namespace RssSE.Bff.Purchases.Models
 {
-    public class OrderTransactionViewModel
+    public class OrderDTO
     {
+        public int Code { get; set; }
+        public int Status { get; set; }
+        public DateTime Date { get; set; }
         public decimal TotalValue { get; set; }
         public decimal Discount { get; set; }
         public string VoucherCode { get; set; }
         public bool VoucherApplyed { get; set; }
 
-        public List<CartItemViewModel> CartItems { get; set; } = new List<CartItemViewModel>();
+        public List<CartItemDTO> CartItems { get; set; } = new List<CartItemDTO>();
 
-        public AddressViewModel Address { get; set; }
+        public AddressDTO Address { get; set; }
 
         [Required(ErrorMessage = "Informe o número do cartão")]
         [DisplayName("Número do Cartão")]

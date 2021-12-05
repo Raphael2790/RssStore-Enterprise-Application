@@ -6,5 +6,6 @@
         public string CatalogAPIUrl { get; set; }
         public string PaymentAPIUrl { get; set; }
         public string OrderAPIUrl { get; set; }
+        public string CustomerAPIUrl { get; set; }
     }
 }

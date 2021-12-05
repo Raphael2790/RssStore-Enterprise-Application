@@ -4,6 +4,7 @@ using RssSE.Bff.Purchases.Models;
 using RssSE.Bff.Purchases.Services.BaseService;
 using RssSE.Bff.Purchases.Services.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -23,6 +24,17 @@ namespace RssSE.Bff.Purchases.Services
             var response = await _client.GetAsync($"/catalogo/produto/{productId}");
             HasResponseError(response);
             return await DeserializeResponse<ItemProductDTO>(response);
+        }
+
+        public async Task<IEnumerable<ItemProductDTO>> GetItems(IEnumerable<Guid> ids)
+        {
+            var idsRequest = string.Join(",", ids);
+
+            var response = await _client.GetAsync($"/catalogo/produtos/lista/{idsRequest}/");
+
+            HasResponseError(response);
+
+            return await DeserializeResponse<IEnumerable<ItemProductDTO>>(response);
         }
     }
 }

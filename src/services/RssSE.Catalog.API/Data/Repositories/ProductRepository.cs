@@ -4,6 +4,7 @@ using RssSE.Catalog.API.Models.Repositories;
 using RssSE.Core.Data;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace RssSE.Catalog.API.Data.Repositories
@@ -27,6 +28,19 @@ namespace RssSE.Catalog.API.Data.Repositories
 
         public async Task<IEnumerable<Product>> GetAll() =>
             await _context.Products.AsNoTracking().ToListAsync();
+
+        public async Task<IEnumerable<Product>> GetProductsById(string ids)
+        {
+            var idsGuid = ids.Split(',')
+                 .Select(id => (Ok: Guid.TryParse(id, out var x), Value: x));
+
+            if (!idsGuid.All(nid => nid.Ok)) return new List<Product>();
+
+            var idsValue = idsGuid.Select(id => id.Value);
+
+            return await _context.Products.AsNoTracking()
+                .Where(p => idsValue.Contains(p.Id) && p.Active).ToListAsync();
+        }
 
         public void Update(Product product) => _context.Products.Update(product);
     }

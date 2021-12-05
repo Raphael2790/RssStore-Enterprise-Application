@@ -9,6 +9,7 @@ namespace RssSE.Catalog.API.Models.Repositories
     {
         Task<IEnumerable<Product>> GetAll();
         Task<Product> Get(Guid id);
+        Task<IEnumerable<Product>> GetProductsById(string ids);
         void Add(Product product);
         void Update(Product product);
     }
