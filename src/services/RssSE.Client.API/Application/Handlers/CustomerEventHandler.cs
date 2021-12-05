@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace RssSE.Client.API.Application.Handlers
 {
-    public class ClientEventHandler : INotificationHandler<RegisteredClientEvent>
+    public class CustomerEventHandler : INotificationHandler<RegisteredCustomerEvent>
     {
-        public Task Handle(RegisteredClientEvent message, CancellationToken cancellationToken)
+        public Task Handle(RegisteredCustomerEvent message, CancellationToken cancellationToken)
         {
             //Oportunidade para enviar um email de boas vindas
             return Task.CompletedTask;

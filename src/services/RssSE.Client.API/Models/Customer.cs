@@ -5,7 +5,7 @@ using System;
 
 namespace RssSE.Client.API.Models
 {
-    public class Client : Entity, IAggregateRoot
+    public class Customer : Entity, IAggregateRoot
     {
         public string Name { get; private set; }
         public Email Email { get; private set; }
@@ -13,7 +13,7 @@ namespace RssSE.Client.API.Models
         public bool Deleted { get; private set; }
         public Address Address { get; private set; }
 
-        public Client(Guid id, string name, string email, string cpf)
+        public Customer(Guid id, string name, string email, string cpf)
         {
             Id = id;
             Name = name;
@@ -22,7 +22,7 @@ namespace RssSE.Client.API.Models
             Deleted = false;
         }
 
-        protected Client() {}
+        protected Customer() {}
 
         public void ChangeEmail(string email) => Email = new Email(email);
         public void ChangeAddress(Address address) => Address = address;

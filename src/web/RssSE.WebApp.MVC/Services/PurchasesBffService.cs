@@ -46,6 +46,26 @@ namespace RssSE.WebApp.MVC.Services
             return await DeserializeResponse<int>(response);
         }
 
+        public OrderTransactionViewModel MapToOrder(CartViewModel cart, AddressViewModel address)
+        {
+            var order = new OrderTransactionViewModel
+            {
+                TotalValue = cart.TotalValue,
+                VoucherCode = cart.Voucher?.Code,
+                CartItems = cart.CartItems,
+                VoucherApplyed = cart.VoucherApplyed,
+                Discount = cart.Discount
+            };
+
+            if(address != null)
+            {
+                order.Address = new AddressViewModel(address.Street, address.Number, address.Complement, address.Neighborhood
+                    , address.ZipCode, address.City, address.State);
+            }
+
+            return order;
+        }
+
         public async Task<ResponseResult> RemoveItemInCart(Guid productId)
         {
             var response = await _client.DeleteAsync($"compras/carrinho/items/{productId}");

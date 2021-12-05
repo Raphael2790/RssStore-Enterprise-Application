@@ -2,6 +2,7 @@
 using RssSE.Order.Domain.Entities;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Threading.Tasks;
 using CustomerOrder = RssSE.Order.Domain.Entities.Order;
 
@@ -13,6 +14,8 @@ namespace RssSE.Order.Domain.Repositories
         Task<IEnumerable<CustomerOrder>> GetByCustomerId(Guid customerId);
         void AddOrder(CustomerOrder order);
         void UpdateOrder(CustomerOrder order);
+
+        DbConnection GetConnection();
 
         Task<OrderItem> GetItemById(Guid id);
         Task<OrderItem> GetItemByOrder(Guid orderId, Guid productId);

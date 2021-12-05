@@ -9,7 +9,7 @@ using RssSE.Client.API.Data.Context;
 
 namespace RssSE.Client.API.Migrations
 {
-    [DbContext(typeof(ClientDbContext))]
+    [DbContext(typeof(CustomerDbContext))]
     [Migration("20211117181513_Clients")]
     partial class Clients
     {

@@ -13,5 +13,6 @@ namespace RssSE.WebApp.MVC.Services.Interfaces
         Task<ResponseResult> UpdateItemInCart(Guid productId, CartItemViewModel productItem);
         Task<ResponseResult> RemoveItemInCart(Guid productId);
         Task<ResponseResult> ApplyVoucherCart(string voucher);
+        OrderTransactionViewModel MapToOrder(CartViewModel cart, AddressViewModel address);
     }
 }

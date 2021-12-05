@@ -15,7 +15,7 @@ namespace RssSE.Client.API.Configuration
         {
             services.AddCompressionConfiguration();
 
-            services.AddDbContext<ClientDbContext>(options =>
+            services.AddDbContext<CustomerDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             services.AddControllers();

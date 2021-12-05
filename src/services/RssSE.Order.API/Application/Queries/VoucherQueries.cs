@@ -4,15 +4,15 @@ using System.Threading.Tasks;
 
 namespace RssSE.Order.API.Application.Queries
 {
-    public interface IVoucherQuery
+    public interface IVoucherQueries
     {
         Task<VoucherDTO> GetVoucherByCode(string code);
     }
 
-    public class VoucherQuery : IVoucherQuery
+    public class VoucherQueries : IVoucherQueries
     {
         private readonly IVoucherRepository _voucherRepository;
-        public VoucherQuery(IVoucherRepository voucherRepository)
+        public VoucherQueries(IVoucherRepository voucherRepository)
         {
             _voucherRepository = voucherRepository;
         }

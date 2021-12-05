@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Polly;
 using RssSE.WebApi.Core.User;
 using RssSE.WebApi.Core.User.Interfaces;
 using RssSE.WebApp.MVC.Extensions;
@@ -41,6 +40,13 @@ namespace RssSE.WebApp.MVC.Configuration
             services.AddHttpClient<IPurchasesBffService, PurchasesBffService>(client => 
             {
                 client.BaseAddress = new Uri(configuration.GetSection("PurchasesBffUrl").Value);
+            }).AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
+              .AddPolicyHandler(PollyExtensions.RetryAsyncWithThreeAttemptsAndLogging())
+              .AddPolicyHandler(PollyExtensions.CircuitBreakAfterThreeAttempts());
+
+            services.AddHttpClient<ICustomerService, CustomerService>(client =>
+            {
+                client.BaseAddress = new Uri(configuration.GetSection("CustomerServiceUrl").Value);
             }).AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
               .AddPolicyHandler(PollyExtensions.RetryAsyncWithThreeAttemptsAndLogging())
               .AddPolicyHandler(PollyExtensions.CircuitBreakAfterThreeAttempts());

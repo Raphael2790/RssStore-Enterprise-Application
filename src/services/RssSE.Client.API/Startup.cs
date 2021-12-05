@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RssSE.Client.API.Configuration;
+using RssSE.WebApi.Core.Identity;
 
 namespace RssSE.Client.API
 {
@@ -31,6 +32,7 @@ namespace RssSE.Client.API
             services.AddSwaggerConfiguration();
             services.AddMediatR(typeof(Startup));
             services.AddApiConfiguration(Configuration);
+            services.AddJwtConfiguration(Configuration);
             services.RegisterServices();
             services.AddMessageBusConfiguration(Configuration);
         }

@@ -5,6 +5,7 @@ using RssSE.Order.Domain.Repositories;
 using RssSE.Order.Infra.Data.Context;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,6 +21,8 @@ namespace RssSE.Order.Infra.Data.Repositories
         }
 
         public IUnitOfWork UnitOfWork => _context;
+
+        public DbConnection GetConnection() => _context.Database.GetDbConnection();
 
         public void AddOrder(Domain.Entities.Order order) => _context.Orders.Add(order);
 

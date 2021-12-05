@@ -34,6 +34,7 @@ namespace RssSE.Order.API
             services.AddMediatR(typeof(Startup));
             services.AddJwtConfiguration(Configuration);
             services.AddSwaggerConfiguration();
+            services.AddMessageBusConfiguration(Configuration);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

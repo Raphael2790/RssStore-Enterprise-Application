@@ -24,6 +24,11 @@ namespace RssSE.WebApp.MVC.Extensions
             return valor > 0 ? string.Format(Thread.CurrentThread.CurrentCulture, "{0:C}", valor) : "Gratuito";
         }
 
+        public static string FormatCurrency(decimal valor)
+        {
+            return valor > 0 ? string.Format(Thread.CurrentThread.CurrentCulture, "{0:C}", valor) : "Gratuito";
+        }
+
         public static string StockMessage(this RazorPage page, int quantidade)
         {
             return quantidade > 0 ? $"Apenas {quantidade} em estoque!" : "Produto esgotado!";
@@ -32,6 +37,11 @@ namespace RssSE.WebApp.MVC.Extensions
         public static string UnitsByProduct(this RazorPage page, int unidades)
         {
             return unidades > 1 ? $"{unidades} unidades" : $"{unidades} unidade";
+        }
+
+        public static string TotalValueByProductUnits(this RazorPage page, int unidades, decimal valor)
+        {
+            return $"{unidades}x {FormatCurrency(valor)} = Total: {FormatCurrency(valor * unidades)}";
         }
 
         public static string SelectOptionsByQuantity(this RazorPage page, int quantidade, int valorSelecionado = 0)

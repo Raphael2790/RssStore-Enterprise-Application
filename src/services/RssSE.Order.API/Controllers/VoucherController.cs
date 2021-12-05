@@ -14,9 +14,9 @@ namespace RssSE.Order.API.Controllers
     [Authorize]
     public class VoucherController : MainController
     {
-        private readonly IVoucherQuery _voucherQuery;
+        private readonly IVoucherQueries _voucherQuery;
 
-        public VoucherController(IVoucherQuery voucherQuery)
+        public VoucherController(IVoucherQueries voucherQuery)
         {
             _voucherQuery = voucherQuery;
         }

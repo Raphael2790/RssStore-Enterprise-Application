@@ -5,14 +5,14 @@ using System;
 
 namespace RssSE.Client.API.Application.Events
 {
-    public class RegisteredClientEvent : Event
+    public class RegisteredCustomerEvent : Event
     {
         public Guid Id { get; private set; }
         public string Name { get; private set; }
         public string Email { get; private set; }
         public string Cpf { get; private set; }
 
-        public RegisteredClientEvent(Guid id, string name, string email, string cpf)
+        public RegisteredCustomerEvent(Guid id, string name, string email, string cpf)
         {
             AggregateId = id;
             Id = id;
@@ -29,7 +29,7 @@ namespace RssSE.Client.API.Application.Events
         }
     }
 
-    public class RegisteredClientEventValidation : AbstractValidator<RegisteredClientEvent>
+    public class RegisteredClientEventValidation : AbstractValidator<RegisteredCustomerEvent>
     {
         public string IdErrorMessage => "Id cliente é inválido";
         public string NameErrorMessage => "Nome do cliente deve ser informado";

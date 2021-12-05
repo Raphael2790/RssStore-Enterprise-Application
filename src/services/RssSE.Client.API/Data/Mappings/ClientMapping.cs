@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using RssSE.Core.DomainObjects.ValueObjects;
-using ClientModel = RssSE.Client.API.Models.Client;
+using ClientModel = RssSE.Client.API.Models.Customer;
 
 namespace RssSE.Client.API.Data.Mappings
 {

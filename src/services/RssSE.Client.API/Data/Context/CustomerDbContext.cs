@@ -7,21 +7,20 @@ using RssSE.Core.Mediator;
 using RssSE.Core.Messages;
 using System.Linq;
 using System.Threading.Tasks;
-using ClientModel = RssSE.Client.API.Models.Client;
 
 namespace RssSE.Client.API.Data.Context
 {
-    public class ClientDbContext : DbContext, IUnitOfWork
+    public class CustomerDbContext : DbContext, IUnitOfWork
     {
         private readonly IMediatorHandler _mediator;
-        public ClientDbContext(DbContextOptions<ClientDbContext> options, IMediatorHandler mediator) : base(options)
+        public CustomerDbContext(DbContextOptions<CustomerDbContext> options, IMediatorHandler mediator) : base(options)
         {
             ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
             ChangeTracker.AutoDetectChangesEnabled = false;
             _mediator = mediator;
         }
 
-        public DbSet<ClientModel> Clients { get; set; }
+        public DbSet<Customer> Customers { get; set; }
         public DbSet<Address> Addresses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -35,7 +34,7 @@ namespace RssSE.Client.API.Data.Context
             modelBuilder.Ignore<Event>();
             modelBuilder.Ignore<ValidationResult>();
            
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(ClientDbContext).Assembly);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(CustomerDbContext).Assembly);
         }
 
         public async Task<bool> Commit() 
