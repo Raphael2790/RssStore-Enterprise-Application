@@ -1,6 +1,9 @@
 ﻿using FluentValidation.Results;
 using MediatR;
+using RssSE.Core.Mediator;
 using RssSE.Core.Messages;
+using RssSE.Core.Messages.Integration;
+using RssSE.MessageBus;
 using RssSE.Order.API.Application.DTOs;
 using RssSE.Order.API.Application.Events;
 using RssSE.Order.Domain.Repositories;
@@ -17,10 +20,14 @@ namespace RssSE.Order.API.Application.Commands.Handlers
     {
         private readonly IVoucherRepository _voucherRepository;
         private readonly IOrderRepository _orderRepository;
-        public OrderCommandHandler(IVoucherRepository voucherRepository, IOrderRepository orderRepository)
+        private readonly IMessageBus _bus;
+        public OrderCommandHandler(IVoucherRepository voucherRepository, 
+                                    IOrderRepository orderRepository,
+                                    IMessageBus bus)
         {
             _voucherRepository = voucherRepository;
             _orderRepository = orderRepository;
+            _bus = bus;
         }
 
         public async Task<ValidationResult> Handle(CreateOrderCommand message, CancellationToken cancellationToken)
@@ -29,7 +36,8 @@ namespace RssSE.Order.API.Application.Commands.Handlers
             var order = MapOrder(message);
             if (!await ApplyVoucher(message, order)) return ValidationResult;
             if (!ValidateOrder(order)) return ValidationResult;
-            if (!ProcessPayment(order)) return ValidationResult;
+            if (!await ProcessPayment(order, message)) return ValidationResult;
+            order.AuthorizeOrder();
             order.AddEvent(new FinishedOrderEvent(order.Id,order.CustomerId));
             _orderRepository.AddOrder(order);
             return await PersistData(_orderRepository.UnitOfWork);
@@ -90,12 +98,31 @@ namespace RssSE.Order.API.Application.Commands.Handlers
                 AddError("O valor do desconto não confere com o cálculo do pedido");
                 return false;
             }
-            order.AuthorizeOrder();
             return true;
         }
-        private bool ProcessPayment(Domain.Entities.Order order)
+        private async Task<bool> ProcessPayment(Domain.Entities.Order order, CreateOrderCommand message)
         {
-            return true;
+            var beganOrder = new BeganOrderIntegrationEvent
+            {
+                CustomerId = order.CustomerId,
+                OrderId = order.Id,
+                TotalValue = order.TotalValue,
+                PaymentType = 1,
+                CardOwnerName = message.CardOwnerName,
+                CardCvv = message.CardCvv,
+                CardExpirationDate = message.CardExpirationDate,
+                CardNumber = message.CardNumber
+            };
+
+            var result = await _bus
+                .RequestAsync<BeganOrderIntegrationEvent, ResponseMessage>(beganOrder);
+
+            if (result.ValidationResult.IsValid) return true;
+
+            foreach (var error in result.ValidationResult.Errors)
+                AddError(error.ErrorMessage);
+            
+            return false;
         }
     }
 }
