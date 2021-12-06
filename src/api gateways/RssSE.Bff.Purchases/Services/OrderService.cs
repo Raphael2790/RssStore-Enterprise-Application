@@ -34,7 +34,7 @@ namespace RssSE.Bff.Purchases.Services
 
         public async Task<OrderDTO> GetLastOrder()
         {
-            var response = await _client.GetAsync("/pedido/ultimo/");
+            var response = await _client.GetAsync("/pedido/ultimo");
 
             if (response.StatusCode == HttpStatusCode.NotFound) return null;
 
@@ -45,7 +45,7 @@ namespace RssSE.Bff.Purchases.Services
 
         public async Task<IEnumerable<OrderDTO>> GetListByCustomerId()
         {
-            var response = await _client.GetAsync("/pedido/lista-cliente/");
+            var response = await _client.GetAsync("pedido/lista-cliente");
 
             if (response.StatusCode == HttpStatusCode.NotFound) return null;
 

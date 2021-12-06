@@ -50,13 +50,14 @@ namespace RssSE.WebApp.MVC.Controllers
                 return View("Payment", orderMap);
             }
 
-            return RedirectToAction("OrderFisnished");
+            return RedirectToAction("FinishedOrder");
         }
 
         [HttpGet("pedido-concluido")]
         public async Task<IActionResult> FinishedOrder()
         {
-            return View("OrderConfirmation", await _purchasesBffService.GetLastOrder());
+            var order = await _purchasesBffService.GetLastOrder();
+            return View("OrderConfirmation", order);
         }
 
         [HttpGet("meus-pedidos")]

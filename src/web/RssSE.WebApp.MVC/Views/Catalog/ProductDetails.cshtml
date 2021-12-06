@@ -1,7 +1,7 @@
 ﻿@using RssSE.WebApp.MVC.Extensions
 @model RssSE.WebApp.MVC.Models.ProductViewModel
 @{
-    ViewData["Title"] = Model.Name;
+    ViewData["Title"] = Model.ProductName;
 }
 <section class="section-content padding-y bg container">
     <div class="card">
@@ -9,7 +9,7 @@
             <aside class="col-md-6">
                 <article class="gallery-wrap">
                     <div class="img-big-wrap" style="text-align: center">
-                        <img src="~/images/produtos/@Model.Image" alt="@Model.Name">
+                        <img src="~/images/produtos/@Model.Image" alt="@Model.ProductName">
                     </div>
                 </article>
             </aside>
@@ -18,7 +18,7 @@
                     <form asp-controller="Cart" asp-action="AddItemCart" method="post">
                         <input type="hidden" name="ProductId" id="ProductId" value="@Model.Id" />
 
-                        <h2 class="title">@Model.Name</h2>
+                        <h2 class="title">@Model.ProductName</h2>
 
                         <div class="rating-wrap my-3">
                             <ul class="rating-stars">

@@ -11,7 +11,7 @@
         <vc:Summary></vc:Summary>
 
         @{
-        if (Model.CartItems.Any())
+        if (Model.Items.Any())
         {
         <div class="card">
             <div class="tracking-wrap">
@@ -40,16 +40,16 @@
                 </header>
                 <div class="row">
                     @{
-                    foreach (var item in Model.CartItems)
+                    foreach (var item in Model.Items)
                     {
                     <div class="col-md-6">
                         <figure class="itemside  mb-3">
                             <div class="aside">
-                                <img src="~/images/produtos/@item.Image" alt="@item.Name" class="border img-xs">
+                                <img src="~/images/produtos/@item.Image" alt="@item.ProductName" class="border img-xs">
                             </div>
                             <figcaption class="info">
                                 <p>
-                                    <b>@item.Name</b>
+                                    <b>@item.ProductName</b>
                                 </p>
                                 <span>@this.TotalValueByProductUnits(item.Quantity, item.UnitValue) </span>
                             </figcaption>

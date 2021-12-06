@@ -15,16 +15,16 @@
         <div class="container" style=" padding-top: 20px">
             <div class="row">
                 @{
-                    foreach (var produto in Model.OrderBy(p => p.Name))
+                    foreach (var produto in Model.OrderBy(p => p.ProductName))
                     {
                         <div class="col-md-3">
                             <div href="#" class="card card-product-grid">
                                 <a asp-controller="Catalog" asp-action="ProductDetails" asp-route-id="@produto.Id" class="img-wrap">
-                                    <img src="~/images/produtos/@produto.Image" alt="@produto.Name">
+                                    <img src="~/images/produtos/@produto.Image" alt="@produto.ProductName">
                                 </a>
                                 <figcaption class="info-wrap">
                                     <a asp-controller="Catalogo" asp-action="ProdutoDetalhe" asp-route-id="@produto.Id" class="title">
-                                        <b> @produto.Name</b>
+                                        <b> @produto.ProductName</b>
                                     </a>
 
                                     <small class="card-text">

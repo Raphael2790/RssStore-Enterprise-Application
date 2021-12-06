@@ -42,7 +42,7 @@ namespace RssSE.Order.API.Controllers
             return order is null ? NotFound() : CustomResponse(order);
         }
 
-        [HttpGet("pedido/list-cliente")]
+        [HttpGet("pedido/lista-cliente")]
         public async Task<IActionResult> ListByCustomer()
         {
             var orders = await _orderQueries.GetListByCustomer(_user.GetUserId());

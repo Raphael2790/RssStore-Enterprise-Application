@@ -22,7 +22,7 @@ namespace RssSE.Bff.Purchases.Services
 
         public async Task<AddressDTO> GetAddress()
         {
-            var response = await _client.GetAsync("/cliente/endereco");
+            var response = await _client.GetAsync("cliente/endereco");
             if (response.StatusCode == HttpStatusCode.NotFound) return null;
             HasResponseError(response);
             return await DeserializeResponse<AddressDTO>(response);

@@ -10,7 +10,7 @@ namespace RssSE.Order.API.Application.Commands
     {
         public Guid CustomerId { get; set; }
         public decimal TotalValue { get; set; }
-        public List<OrderItemDTO> OrderItems { get; set; }
+        public List<OrderItemDTO> Items { get; set; } = new List<OrderItemDTO>();
 
         public string VoucherCode { get; set; }
         public bool VoucherApplyed { get; set; }
@@ -40,7 +40,7 @@ namespace RssSE.Order.API.Application.Commands
                 .NotNull()
                 .WithMessage("Id do cliente inválido");
 
-            RuleFor(x => x.OrderItems.Count)
+            RuleFor(x => x.Items.Count)
                 .GreaterThan(0)
                 .WithMessage("O pedido precisa ter no mínimo 1 item");
 

@@ -11,7 +11,7 @@
         <vc:Summary></vc:Summary>
 
         @{
-            if (Model.CartItems.Any())
+            if (Model.Items.Any())
             {
                 <div class="card">
                     <div class="tracking-wrap">
@@ -40,16 +40,16 @@
                         </header>
                         <div class="row">
                             @{
-                                foreach (var item in Model.CartItems)
+                                foreach (var item in Model.Items)
                                 {
                                     <div class="col-md-6">
                                         <figure class="itemside  mb-3">
                                             <div class="aside">
-                                                <img src="~/images/produtos/@item.Image" alt="@item.Name" class="border img-xs">
+                                                <img src="~/images/produtos/@item.Image" alt="@item.ProductName" class="border img-xs">
                                             </div>
                                             <figcaption class="info">
                                                 <p>
-                                                    <b>@item.Name</b>
+                                                    <b>@item.ProductName</b>
                                                 </p>
                                                 <span>@this.TotalValueByProductUnits(item.Quantity, item.UnitValue) </span>
                                             </figcaption>
@@ -95,10 +95,10 @@
                                 <div class="row">
                                     <div class="col-md-4 col-sm-12">
                                         <div>
-                                            <label asp-for="ExpirationDate"></label>
+                                            <label asp-for="CardExpirationDate"></label>
                                             <div class="form-inline">
-                                                <input style="width: 190px" asp-for="ExpirationDate" class="form-control" />
-                                                <span asp-validation-for="ExpirationDate" class="text-danger"></span>
+                                                <input style="width: 190px" asp-for="CardExpirationDate" class="form-control" />
+                                                <span asp-validation-for="CardExpirationDate" class="text-danger"></span>
                                             </div>
                                         </div>
                                     </div>

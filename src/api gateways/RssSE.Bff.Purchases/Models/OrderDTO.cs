@@ -16,7 +16,7 @@ namespace RssSE.Bff.Purchases.Models
         public string VoucherCode { get; set; }
         public bool VoucherApplyed { get; set; }
 
-        public List<CartItemDTO> CartItems { get; set; } = new List<CartItemDTO>();
+        public List<OrderItemDTO> OrderItems { get; set; } = new List<OrderItemDTO>();
 
         public AddressDTO Address { get; set; }
 
@@ -32,7 +32,7 @@ namespace RssSE.Bff.Purchases.Models
         [Required(ErrorMessage = "Informe o vencimento")]
         [ExpirationCard(ErrorMessage = "Cartão Expirado")]
         [DisplayName("Data de Vencimento MM/AA")]
-        public string ExpirationDate { get; set; }
+        public string CardExpirationDate { get; set; }
 
         [Required(ErrorMessage = "Informe o código de segurança")]
         [DisplayName("Código de Segurança")]

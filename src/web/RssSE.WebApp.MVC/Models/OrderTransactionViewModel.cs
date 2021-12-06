@@ -12,7 +12,7 @@ namespace RssSE.WebApp.MVC.Models
         public string VoucherCode { get; set; }
         public bool VoucherApplyed { get; set; }
 
-        public List<CartItemViewModel> CartItems { get; set; } = new List<CartItemViewModel>();
+        public List<CartItemViewModel> Items { get; set; } = new List<CartItemViewModel>();
 
         public AddressViewModel Address { get; set; }
 
@@ -28,7 +28,7 @@ namespace RssSE.WebApp.MVC.Models
         [Required(ErrorMessage = "Informe o vencimento")]
         [ExpirationCard(ErrorMessage = "Cartão Expirado")]
         [DisplayName("Data de Vencimento MM/AA")]
-        public string ExpirationDate { get; set; }
+        public string CardExpirationDate { get; set; }
 
         [Required(ErrorMessage = "Informe o código de segurança")]
         [DisplayName("Código de Segurança")]

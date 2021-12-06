@@ -30,7 +30,7 @@ namespace RssSE.Order.API.Application.DTOs
                 Discount = order.Discount,
                 VoucherApplyed = order.VoucherApplyed,
                 Status = (int)order.OrderStatus,
-                VoucherCode = order.VoucherApplyed ? order.Voucher.Code : null,
+                VoucherCode = order.VoucherApplyed ? order.Voucher?.Code : null,
                 OrderItems = new List<OrderItemDTO>()
             };
 
@@ -41,7 +41,7 @@ namespace RssSE.Order.API.Application.DTOs
                     ProductName = item.ProductName,
                     Image = item.Image,
                     Quantity = item.Quantity,
-                    Value = item.UnitValue,
+                    UnitValue = item.UnitValue,
                     OrderId = item.OrderId,
                     ProductId = item.ProductId
                 });

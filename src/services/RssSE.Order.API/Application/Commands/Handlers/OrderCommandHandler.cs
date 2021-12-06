@@ -48,7 +48,7 @@ namespace RssSE.Order.API.Application.Commands.Handlers
                 ZipCode = message.Address.ZipCode
             };
 
-            var order = new Domain.Entities.Order(message.CustomerId, message.TotalValue, message.OrderItems.Select(OrderItemDTO.ToOrderItem).ToList(),
+            var order = new Domain.Entities.Order(message.CustomerId, message.TotalValue, message.Items.Select(OrderItemDTO.ToOrderItem).ToList(),
                 message.VoucherApplyed, message.Discount);
 
             order.AddAddress(address);
@@ -90,6 +90,7 @@ namespace RssSE.Order.API.Application.Commands.Handlers
                 AddError("O valor do desconto não confere com o cálculo do pedido");
                 return false;
             }
+            order.AuthorizeOrder();
             return true;
         }
         private bool ProcessPayment(Domain.Entities.Order order)

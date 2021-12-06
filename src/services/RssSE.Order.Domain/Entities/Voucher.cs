@@ -44,7 +44,7 @@ namespace RssSE.Order.Domain.Entities
 
     public enum VoucherType
     {
-        Discount = 0,
-        Percentage = 1
+        Discount = 1,
+        Percentage = 0
     }
 }

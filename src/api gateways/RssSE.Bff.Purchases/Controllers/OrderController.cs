@@ -119,7 +119,18 @@ namespace RssSE.Bff.Purchases.Controllers
             order.VoucherApplyed = cart.VoucherApplyed;
             order.TotalValue = cart.TotalValue;
             order.Discount = cart.Discount;
-            order.CartItems = cart.CartItems;
+
+            foreach (var item in cart.CartItems)
+            {
+                order.OrderItems.Add(new OrderItemDTO
+                {
+                    Image = item.Image,
+                    ProductId = item.ProductId,
+                    ProductName = item.Name,
+                    Quantity = item.Quantity,
+                    UnitValue = item.UnitValue
+                });
+            }
 
             order.Address = address;
         }

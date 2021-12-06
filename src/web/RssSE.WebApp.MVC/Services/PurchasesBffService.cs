@@ -36,7 +36,7 @@ namespace RssSE.WebApp.MVC.Services
         public async Task<ResponseResult> FinishOrder(OrderTransactionViewModel orderTransaction)
         {
             var content = GetContent(orderTransaction);
-            var response = await _client.PostAsync("/compras/pedido/", content);
+            var response = await _client.PostAsync("compras/pedido", content);
             if (!HasResponseError(response)) return await DeserializeResponse<ResponseResult>(response);
             return OkReturn();
         }
@@ -57,7 +57,7 @@ namespace RssSE.WebApp.MVC.Services
 
         public async Task<OrderViewModel> GetLastOrder()
         {
-            var response = await _client.GetAsync("/compras/pedidos/ultimo");
+            var response = await _client.GetAsync("/compras/pedido/ultimo");
             HasResponseError(response);
             return await DeserializeResponse<OrderViewModel>(response);
         }
@@ -75,7 +75,7 @@ namespace RssSE.WebApp.MVC.Services
             {
                 TotalValue = cart.TotalValue,
                 VoucherCode = cart.Voucher?.Code,
-                CartItems = cart.CartItems,
+                Items = cart.CartItems,
                 VoucherApplyed = cart.VoucherApplyed,
                 Discount = cart.Discount
             };

@@ -36,10 +36,10 @@
                                                 <td>
                                                     <figure class="itemside">
                                                         <div class="aside">
-                                                            <img src="~/images/produtos/@item.Image" alt="@item.Name" class="img-sm">
+                                                            <img src="~/images/produtos/@item.Image" alt="@item.ProductName" class="img-sm">
                                                         </div>
                                                         <figcaption class="info">
-                                                            <a asp-controller="Catalog" asp-action="ProductDetails" asp-route-id="@item.ProductId"><h6 style="padding-top: 10px" class="title text-dark">@item.Name</h6></a>
+                                                            <a asp-controller="Catalog" asp-action="ProductDetails" asp-route-id="@item.ProductId"><h6 style="padding-top: 10px" class="title text-dark">@item.ProductName</h6></a>
                                                             <p class="text-muted small">@this.UnitsByProduct(item.Quantity)</p>
                                                         </figcaption>
                                                     </figure>

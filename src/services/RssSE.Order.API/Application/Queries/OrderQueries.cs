@@ -26,9 +26,25 @@ namespace RssSE.Order.API.Application.Queries
         public async Task<OrderDTO> GetLastOrder(Guid customerId) 
         {
             const string sql = @"SELECT
-                                P.ID AS 'ProductId', P.CODE, P.VOUCHERAPPLYED, P.DISCOUNT, P.TOTALVALUE, P.ORDERSTATUS,
-                                P.STREET, P.NUMBER, P.NEIGHBORHOOD, P.ZIPCODE, P.COMPLEMENT, P.CITY, P.STATE, PIT.ID AS 'ProductItemId',
-                                PIT.PRODUCTNAME, PIT.QUANTITY, PIT.IMAGE, PIT.UNITVALUE
+                                P.ID AS 'ProductId', 
+                                P.CODE, 
+                                P.VOUCHERAPPLYED,
+                                P.DISCOUNT, 
+                                P.TOTALVALUE, 
+                                P.ORDERSTATUS,
+                                P.STREET, 
+                                P.NUMBER, 
+                                P.NEIGHBORHOOD, 
+                                P.ZIPCODE,
+                                P.COMPLEMENT, 
+                                P.CITY, 
+                                P.STATE, 
+                                PIT.ID AS 'ProductItemId',
+                                PIT.PRODUCTNAME,
+                                PIT.QUANTITY, 
+                                PIT.IMAGE, 
+                                PIT.UNITVALUE,
+                                PIT.IMAGE
                                 FROM ORDERS P
                                 INNER JOIN ORDERITEMS PIT ON P.ID = PIT.ORDERID
                                 WHERE P.CUSTOMERID = @customerId
@@ -78,7 +94,7 @@ namespace RssSE.Order.API.Application.Queries
                     Image = item.IMAGE,
                     ProductName = item.PRODUCTNAME,
                     Quantity = item.QUANTITY,
-                    Value = item.UNITVALUE
+                    UnitValue = item.UNITVALUE
                 };
                 order.OrderItems.Add(orderItem);
             }
