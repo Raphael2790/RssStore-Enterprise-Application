@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace NSE.Pagamentos.NerdsPag
+namespace RssSE.Payment.RssSEPag
 {
     public class CardHash
     {

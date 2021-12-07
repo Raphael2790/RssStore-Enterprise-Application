@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace NSE.Pagamentos.NerdsPag
+namespace RssSE.Payment.RssSEPag
 {
    public class Transaction
     {

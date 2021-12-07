@@ -13,5 +13,13 @@ namespace RssSE.Catalog.API.Models
         public DateTime RegisterDate { get; private set; }
         public string Image { get; private set; }
         public int StockAmount { get; private set; }
+
+        public bool IsAvailable(int productQuantity) => Active && StockAmount >= productQuantity;
+
+        public void DebitStock(int productQuantity)
+        {
+            if (StockAmount >= productQuantity)
+                StockAmount -= productQuantity;
+        }
     }
 }

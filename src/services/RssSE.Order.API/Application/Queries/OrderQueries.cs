@@ -12,6 +12,7 @@ namespace RssSE.Order.API.Application.Queries
     {
         Task<OrderDTO> GetLastOrder(Guid customerId);
         Task<IEnumerable<OrderDTO>> GetListByCustomer(Guid customerId);
+        Task<OrderDTO> GetAuthorizedOrders();
     }
 
     public class OrderQueries : IOrderQueries
@@ -21,6 +22,31 @@ namespace RssSE.Order.API.Application.Queries
         public OrderQueries(IOrderRepository orderRepository)
         {
             _orderRepository = orderRepository;
+        }
+
+        public async Task<OrderDTO> GetAuthorizedOrders()
+        {
+            const string sql = @"SELECT TOP 1
+                                O.ID AS 'OrderId',
+                                O.ID,
+                                O.CUSTOMERID,
+                                OI.ID AS 'OrderItemId',
+                                OI.ID,
+                                OI.PRODUCTID,
+                                OI.QUANTITY
+                                FROM ORDERS O
+                                INNER JOIN ORDERITEMS OI ON O.ID = OI.ORDERID
+                                WHERE O.ORDERSTATUS = 1
+                                ORDER BY O.REGISTERDATE";
+            var order = await _orderRepository.GetConnection()
+                            .QueryAsync<OrderDTO, OrderItemDTO, OrderDTO>(sql, (o, oi) =>
+                            {
+                                o.OrderItems = new List<OrderItemDTO>();
+                                o.OrderItems.Add(oi);
+                                return o;
+                            }, splitOn: "OrderId,OrderItemId");
+
+            return order.FirstOrDefault();
         }
 
         public async Task<OrderDTO> GetLastOrder(Guid customerId) 

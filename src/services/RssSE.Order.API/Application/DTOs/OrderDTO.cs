@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace RssSE.Order.API.Application.DTOs
 {
@@ -9,6 +7,7 @@ namespace RssSE.Order.API.Application.DTOs
     {
         public Guid Id { get; set; }
         public int Code { get; set; }
+        public Guid CustomerId { get; set; }
         public int Status { get; set; }
         public DateTime Date { get; set; }
         public decimal TotalValue { get; set; }

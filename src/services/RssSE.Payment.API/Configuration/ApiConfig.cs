@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RssSE.Payment.API.Data.Context;
+using RssSE.Payment.API.Facade;
 using RssSE.WebApi.Core.Identity;
 
 namespace RssSE.Payment.API.Configuration
@@ -18,7 +19,7 @@ namespace RssSE.Payment.API.Configuration
 
             services.AddControllers();
 
-            //services.Configure<PagamentoConfig>(configuration.GetSection("PagamentoConfig"));
+            services.Configure<PaymentConfig>(configuration.GetSection("PaymentConfig"));
 
             services.AddCors(options =>
             {

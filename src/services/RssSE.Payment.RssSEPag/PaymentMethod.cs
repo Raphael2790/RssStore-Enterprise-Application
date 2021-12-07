@@ -1,4 +1,4 @@
-﻿namespace NSE.Pagamentos.NerdsPag
+﻿namespace RssSE.Payment.RssSEPag
 {
     public enum PaymentMethod
     {
