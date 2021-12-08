@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Dapper;
+using Microsoft.EntityFrameworkCore;
+using RssSE.Catalog.API.Extensions;
 using RssSE.Catalog.API.Models;
 using RssSE.Catalog.API.Models.Repositories;
 using RssSE.Core.Data;
@@ -26,8 +28,29 @@ namespace RssSE.Catalog.API.Data.Repositories
         public async Task<Product> Get(Guid id) =>
             await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
 
-        public async Task<IEnumerable<Product>> GetAll() =>
-            await _context.Products.AsNoTracking().ToListAsync();
+        public async Task<PagedResult<Product>> GetAll(int pageSize, int pageIndex, string query = null) 
+        {
+            string sql = @$"SELECT * FROM Products
+                         WHERE (@Name IS NULL OR Name LIKE '%' + @Name + '%')
+                         ORDER BY [Name]
+                         OFFSET {pageSize * (pageIndex - 1)} ROWS
+                         FETCH NEXT {pageSize} ROWS ONLY
+                         SELECT COUNT(Id) FROM Products
+                         WHERE (@Name IS NULL OR Name LIKE '%' + @Name + '%')";
+
+            var multi = await _context.Database.GetDbConnection().QueryMultipleAsync(sql, new { Name = query});
+            var products = multi.Read<Product>();
+            var total = multi.Read<int>().FirstOrDefault();
+
+            return new PagedResult<Product>
+            {
+                List = products,
+                PageIndex = pageIndex,
+                PageSize = pageSize,
+                Query = query, 
+                TotalResults = total
+            };
+        }
 
         public async Task<IEnumerable<Product>> GetProductsById(string ids)
         {

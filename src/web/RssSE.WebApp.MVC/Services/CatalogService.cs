@@ -24,11 +24,11 @@ namespace RssSE.WebApp.MVC.Services
             return await DeserializeResponse<ProductViewModel>(response);
         }
 
-        public async Task<IEnumerable<ProductViewModel>> GetAll()
+        public async Task<PagedViewModel<ProductViewModel>> GetAll(int pageSize, int pageIndex, string query = null)
         {
-            var response = await _client.GetAsync("catalogo/produtos");
+            var response = await _client.GetAsync($"catalogo/produtos?ps={pageSize}&page={pageIndex}&q={query}");
             HasResponseError(response);
-            return await DeserializeResponse<IEnumerable<ProductViewModel>>(response);
+            return await DeserializeResponse<PagedViewModel<ProductViewModel>>(response);
         }
     }
 }

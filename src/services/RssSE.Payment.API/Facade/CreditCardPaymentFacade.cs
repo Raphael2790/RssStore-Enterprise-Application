@@ -1,4 +1,5 @@
-﻿using RssSE.Payment.RssSEPag;
+﻿using Microsoft.Extensions.Options;
+using RssSE.Payment.RssSEPag;
 using System;
 using System.Threading.Tasks;
 
@@ -8,9 +9,9 @@ namespace RssSE.Payment.API.Facade
     {
         private readonly PaymentConfig _paymentConfig;
 
-        public CreditCardPaymentFacade(PaymentConfig paymentConfig)
+        public CreditCardPaymentFacade(IOptions<PaymentConfig> paymentConfig)
         {
-            _paymentConfig = paymentConfig;
+            _paymentConfig = paymentConfig.Value;
         }
 
         public async Task<Models.Transaction> AuthorizePayment(Models.Payment payment)

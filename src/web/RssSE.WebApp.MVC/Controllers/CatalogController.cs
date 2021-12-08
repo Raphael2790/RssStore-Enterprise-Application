@@ -16,7 +16,12 @@ namespace RssSE.WebApp.MVC.Controllers
         [HttpGet]
         [Route("")]
         [Route("vitrine")]
-        public async Task<IActionResult> Index() => View(await _catalogService.GetAll());
+        public async Task<IActionResult> Index([FromQuery] int ps = 8, [FromQuery] int page = 1, [FromQuery] string q = null)
+        {
+            var products = await _catalogService.GetAll(ps, page, q);
+            ViewBag.Search = q;
+            return View(products);
+        }
 
         [HttpGet("produto-detalhe/{id:guid}")]
         public async Task<IActionResult> ProductDetails(Guid id) => View(await _catalogService.Get(id));

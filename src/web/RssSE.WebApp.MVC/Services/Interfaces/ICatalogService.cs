@@ -8,7 +8,7 @@ namespace RssSE.WebApp.MVC.Services.Interfaces
 {
     public interface ICatalogService
     {
-        Task<IEnumerable<ProductViewModel>> GetAll();
+        Task<PagedViewModel<ProductViewModel>> GetAll(int pageSize, int pageIndex, string query = null);
         Task<ProductViewModel> Get(Guid id);
     }
 

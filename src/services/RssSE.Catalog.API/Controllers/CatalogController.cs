@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RssSE.Catalog.API.Extensions;
 using RssSE.Catalog.API.Models;
 using RssSE.Catalog.API.Models.Repositories;
 using RssSE.WebApi.Core.Controllers;
@@ -20,7 +21,8 @@ namespace RssSE.Catalog.API.Controllers
 
         [AllowAnonymous]
         [HttpGet("catalogo/produtos")]
-        public async Task<IEnumerable<Product>> Index() => await _productRepository.GetAll();
+        public async Task<PagedResult<Product>> Index([FromQuery] int ps = 8, [FromQuery] int page = 1, [FromQuery] string q = null) 
+            => await _productRepository.GetAll(ps, page, q);
 
         [HttpGet("catalogo/produto/{id:guid}")]
         public async Task<Product> ProductDetail(Guid id) => await _productRepository.Get(id);

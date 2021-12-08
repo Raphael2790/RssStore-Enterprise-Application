@@ -14,6 +14,11 @@ namespace RssSE.Order.API.Services
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly IMessageBus _bus;
+        public OrderIntegrationHandler(IServiceProvider serviceProvider, IMessageBus bus)
+        {
+            _serviceProvider = serviceProvider;
+            _bus = bus;
+        }
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             SetSubscribers();

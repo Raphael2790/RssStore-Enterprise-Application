@@ -27,9 +27,5 @@
     <ProjectReference Include="..\RssSE.Payment.RssSEPag\RssSE.Payment.RssSEPag.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
 
 </Project>
