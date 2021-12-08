@@ -4,11 +4,11 @@ using System.Threading.Tasks;
 
 namespace RssSE.Payment.API.Facade
 {
-    public class PaymentFacade : IPaymentFacade
+    public class CreditCardPaymentFacade : IPaymentFacade
     {
         private readonly PaymentConfig _paymentConfig;
 
-        public PaymentFacade(PaymentConfig paymentConfig)
+        public CreditCardPaymentFacade(PaymentConfig paymentConfig)
         {
             _paymentConfig = paymentConfig;
         }
@@ -39,6 +39,34 @@ namespace RssSE.Payment.API.Facade
             };
 
             return ToDomainTransaction(await transaction.AuthorizeCardTransaction());
+        }
+
+        public async Task<Models.Transaction> CancelAuthorization(Models.Transaction transaction)
+        {
+            var rssPagService = new RssSEPagService(_paymentConfig.DefaultApiKey, _paymentConfig.DefaultEncriptKey);
+            var paymentTransaction = ToPaymentTransaction(transaction, rssPagService);
+            return ToDomainTransaction(await paymentTransaction.CancelAuthorization());
+        }
+
+        public async Task<Models.Transaction> CapturePayment(Models.Transaction transaction)
+        {
+            var rssPagService = new RssSEPagService(_paymentConfig.DefaultApiKey, _paymentConfig.DefaultEncriptKey);
+            var paymentTransaction = ToPaymentTransaction(transaction, rssPagService);
+            return ToDomainTransaction(await paymentTransaction.CaptureCardTransaction());
+        }
+
+        private Transaction ToPaymentTransaction(Models.Transaction transaction, RssSEPagService rssPagService)
+        {
+            return new Transaction(rssPagService)
+            {
+                Status = (TransactionStatus)transaction.TransactionStatus,
+                Amount = transaction.TotalValue,
+                CardBrand = transaction.CardFlag,
+                AuthorizationCode = transaction.AuthorizationCode,
+                Cost = transaction.TransactionCost,
+                Nsu = transaction.NSU,
+                Tid = transaction.TID
+            };
         }
 
         public Models.Transaction ToDomainTransaction(RssSEPag.Transaction transaction)

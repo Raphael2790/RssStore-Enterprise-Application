@@ -17,7 +17,7 @@ namespace RssSE.Payment.API.Configuration
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IAspNetUser, AspNetUser>();
 
-            services.AddScoped<IPaymentFacade, PaymentFacade>();
+            services.AddScoped<IPaymentFacade, CreditCardPaymentFacade>();
             services.AddScoped<IPaymentService, PaymentService>();
 
             services.AddScoped<IPaymentRepository, PaymentRepository>();

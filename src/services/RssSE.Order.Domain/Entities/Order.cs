@@ -35,9 +35,13 @@ namespace RssSE.Order.Domain.Entities
             VoucherId = voucherId;
         }
 
+        public void CancelOrder() => OrderStatus = OrderStatus.Cancelled;
+
         protected Order() { }
 
         public void AuthorizeOrder() => OrderStatus = OrderStatus.Authorized;
+
+        public void FinishOrder() => OrderStatus = OrderStatus.Payed;
 
         public void AddVoucher(Voucher voucher)
         {
