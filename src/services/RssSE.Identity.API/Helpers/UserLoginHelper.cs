@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using NetDevPack.Security.Jwt.Interfaces;
 using RssSE.Identity.API.Models;
 using RssSE.WebApi.Core.Identity;
+using RssSE.WebApi.Core.User.Interfaces;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
@@ -18,13 +20,16 @@ namespace RssSE.Identity.API.Helpers
         private readonly ClaimsIdentity _claimsIdentity;
         private readonly AppSettings _appSettings;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly IAspNetUser _aspNetUser;
+        private readonly IJsonWebKeySetService _jwksService;
 
-        public UserLoginHelper(IOptions<AppSettings> appSettings, UserManager<IdentityUser> userManager)
+        public UserLoginHelper(IOptions<AppSettings> appSettings, UserManager<IdentityUser> userManager, IJsonWebKeySetService jwksService)
         {
             _tokenHandler = new JwtSecurityTokenHandler();
             _claimsIdentity = new ClaimsIdentity();
             _appSettings = appSettings.Value;
             _userManager = userManager;
+            _jwksService = jwksService;
         }
 
         public async Task<UserLoginResponse> GenerateUserToken(string email)
@@ -61,14 +66,14 @@ namespace RssSE.Identity.API.Helpers
 
         private string WriteUserToken()
         {
-            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+            var key = _jwksService.GetCurrentSigningCredentials();
+            var currentIssuer = $"{_aspNetUser.GetHttpContext().Request.Scheme}://{_aspNetUser.GetHttpContext().Request.Host}";
             var token = _tokenHandler.CreateToken(new SecurityTokenDescriptor
             {
-                Issuer = _appSettings.EmmitedBy,
-                Audience = _appSettings.ValidFor,
+                Issuer = currentIssuer,
                 Subject = _claimsIdentity,
                 Expires = DateTime.UtcNow.AddHours(_appSettings.ExpirationInHours),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                SigningCredentials = key
             });
             return _tokenHandler.WriteToken(token);
         }

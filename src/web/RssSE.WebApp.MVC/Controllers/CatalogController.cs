@@ -20,6 +20,7 @@ namespace RssSE.WebApp.MVC.Controllers
         {
             var products = await _catalogService.GetAll(ps, page, q);
             ViewBag.Search = q;
+            products.ReferenceAction = nameof(Index);
             return View(products);
         }
 

@@ -2,8 +2,11 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using NetDevPack.Security.Jwt.AspNetCore;
 using RssSE.Identity.API.Helpers;
 using RssSE.WebApi.Core.Identity;
+using RssSE.WebApi.Core.User;
+using RssSE.WebApi.Core.User.Interfaces;
 
 namespace RssSE.Identity.API.Configuration
 {
@@ -14,6 +17,8 @@ namespace RssSE.Identity.API.Configuration
             services.AddCompressionConfiguration();
 
             services.AddControllers();
+
+            services.AddScoped<IAspNetUser, AspNetUser>();
 
             //Helper
             services.AddScoped<IUserLoginHelper, UserLoginHelper>();
@@ -41,6 +46,8 @@ namespace RssSE.Identity.API.Configuration
             {
                 endpoints.MapControllers();
             });
+
+            app.UseJwksDiscovery();
 
             return app;
         }
