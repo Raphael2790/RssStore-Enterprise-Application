@@ -1,12 +1,6 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using RssSE.WebApp.MVC.Interfaces.Services;
 using RssSE.WebApp.MVC.Models;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace RssSE.WebApp.MVC.Controllers
@@ -32,7 +26,7 @@ namespace RssSE.WebApp.MVC.Controllers
             if (!ModelState.IsValid) return View(registerUser);
             var response = await _identityService.Register(registerUser);
             if (ResponseHasErrors(response.ResponseResult)) return View(registerUser);
-            await LoginUserInContext(response);
+            await _identityService.ContextLogin(response);
             return RedirectToAction("Index", nameof(HomeController));
         }
 
@@ -50,7 +44,7 @@ namespace RssSE.WebApp.MVC.Controllers
             if (!ModelState.IsValid) return View(userLogin);
             var response = await _identityService.Login(userLogin);
             if (ResponseHasErrors(response.ResponseResult)) return View(userLogin);
-            await LoginUserInContext(response);
+            await _identityService.ContextLogin(response);
             if(string.IsNullOrEmpty(returnUrl)) return RedirectToAction("Index", "Catalog");
             return LocalRedirect(returnUrl);
         }
@@ -58,28 +52,8 @@ namespace RssSE.WebApp.MVC.Controllers
         [HttpGet("logout")]
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            await _identityService.ContextLogout();
             return RedirectToAction("Index", "Catalog");
-        }
-
-        private async Task LoginUserInContext(UserLoginResponse response)
-        {
-            var token = GetFormatedToken(response.AccessToken);
-            var claims = new List<Claim>
-            {
-                new Claim("JWT", response.AccessToken)
-            };
-            claims.AddRange(token.Claims);
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var authProperties = new AuthenticationProperties { ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(60), IsPersistent = true };
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(claimsIdentity), authProperties);
-        }
-
-        private static JwtSecurityToken GetFormatedToken(string token)
-        {
-            return new JwtSecurityTokenHandler().ReadJwtToken(token) as JwtSecurityToken;
         }
     }
 }

@@ -21,7 +21,7 @@ namespace RssSE.Identity.API.Configuration
             services.AddScoped<IAspNetUser, AspNetUser>();
 
             //Helper
-            services.AddScoped<IUserLoginHelper, UserLoginHelper>();
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
 
             return services;
         }

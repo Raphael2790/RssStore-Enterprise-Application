@@ -11,6 +11,7 @@ namespace RssSE.WebApi.Core.User.Interfaces
         Guid GetUserId();
         string GetUserEmail();
         string GetUserToken();
+        string GetRefreshToken();
         bool IsAuthenticated();
         bool HasRole(string role);
         IEnumerable<Claim> GetClaims();

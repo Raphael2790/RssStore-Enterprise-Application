@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using NetDevPack.Security.JwtExtensions;
 using System.Text;
 
 namespace RssSE.WebApi.Core.Identity
@@ -15,7 +16,6 @@ namespace RssSE.WebApi.Core.Identity
             services.Configure<AppSettings>(appSettingsSection);
 
             var appSettings = appSettingsSection.Get<AppSettings>();
-            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
 
             services.AddAuthentication(options =>
             {
@@ -25,15 +25,7 @@ namespace RssSE.WebApi.Core.Identity
             {
                 bearerOptions.RequireHttpsMetadata = true;
                 bearerOptions.SaveToken = true;
-                bearerOptions.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidAudience = appSettings.ValidFor,
-                    ValidIssuer = appSettings.EmmitedBy
-                };
+                bearerOptions.SetJwksOptions(new JwkOptions(appSettings.JwksAuthenticationUrl));
             });
         }
 

@@ -29,5 +29,12 @@ namespace RssSE.WebApi.Core.User.Extensions
             var claim = claimsPrincipal.FindFirst("JWT");
             return claim?.Value;
         }
+
+        public static string GetRefreshToken(this ClaimsPrincipal claimsPrincipal)
+        {
+            if (claimsPrincipal is null) throw new ArgumentNullException(nameof(claimsPrincipal));
+            var claim = claimsPrincipal.FindFirst("RefreshToken");
+            return claim?.Value;
+        }
     }
 }

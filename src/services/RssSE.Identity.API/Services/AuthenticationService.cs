@@ -1,35 +1,51 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using NetDevPack.Security.Jwt.Interfaces;
+using RssSE.Identity.API.Extensions;
 using RssSE.Identity.API.Models;
+using RssSE.Identity.Data.Context;
+using RssSE.Identity.Data.Entities;
 using RssSE.WebApi.Core.Identity;
 using RssSE.WebApi.Core.User.Interfaces;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace RssSE.Identity.API.Helpers
 {
-    public class UserLoginHelper : IUserLoginHelper
+    public class AuthenticationService : IAuthenticationService
     {
         private readonly JwtSecurityTokenHandler _tokenHandler;
         private readonly ClaimsIdentity _claimsIdentity;
-        private readonly AppSettings _appSettings;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly ApplicationDbContext _context;
+        private readonly AppTokenSettings _appTokenSettings;
+
         private readonly IAspNetUser _aspNetUser;
         private readonly IJsonWebKeySetService _jwksService;
 
-        public UserLoginHelper(IOptions<AppSettings> appSettings, UserManager<IdentityUser> userManager, IJsonWebKeySetService jwksService)
+        public UserManager<IdentityUser> UserManager => _userManager;
+
+        public SignInManager<IdentityUser> SignInManager => _signInManager;
+
+        public AuthenticationService(UserManager<IdentityUser> userManager,
+                                    IJsonWebKeySetService jwksService,
+                                    ApplicationDbContext context,
+                                    SignInManager<IdentityUser> signInManager, 
+                                    IOptions<AppTokenSettings> appTokenSettings)
         {
             _tokenHandler = new JwtSecurityTokenHandler();
             _claimsIdentity = new ClaimsIdentity();
-            _appSettings = appSettings.Value;
             _userManager = userManager;
             _jwksService = jwksService;
+            _context = context;
+            _signInManager = signInManager;
+            _appTokenSettings = appTokenSettings.Value;
         }
 
         public async Task<UserLoginResponse> GenerateUserToken(string email)
@@ -38,7 +54,8 @@ namespace RssSE.Identity.API.Helpers
             return new UserLoginResponse
             {
                 AccessToken = WriteUserToken(),
-                ExpiresIn = TimeSpan.FromHours(_appSettings.ExpirationInHours).TotalSeconds,
+                ExpiresIn = TimeSpan.FromHours(1).TotalSeconds,
+                RefreshToken = (await GenerateRefreshToken(email)).Token,
                 UserToken = new UserToken
                 {
                     Id = userInfos.User.Id,
@@ -72,7 +89,7 @@ namespace RssSE.Identity.API.Helpers
             {
                 Issuer = currentIssuer,
                 Subject = _claimsIdentity,
-                Expires = DateTime.UtcNow.AddHours(_appSettings.ExpirationInHours),
+                Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = key
             });
             return _tokenHandler.WriteToken(token);
@@ -89,6 +106,30 @@ namespace RssSE.Identity.API.Helpers
             var userInfos = new UserInfosDto {User = user, Claims = userClaims, Roles = userRoles };
             GetUserClaimsIdentity(userInfos);
             return userInfos;
+        }
+
+        private async Task<RefreshToken> GenerateRefreshToken(string userEmail)
+        {
+            var refreshToken = new RefreshToken
+            {
+                UserName = userEmail,
+                ExpirationDate = DateTime.UtcNow.AddHours(_appTokenSettings.RefreshTokenExpiration)
+            };
+
+            _context.RefreshTokens.RemoveRange(_context.RefreshTokens.Where(x => x.UserName == userEmail));
+            await _context.RefreshTokens.AddAsync(refreshToken);
+            await _context.SaveChangesAsync();
+            return refreshToken;
+        }
+
+        public async Task<RefreshToken> GetRefreshToken(Guid refreshToken)
+        {
+            var token = await _context.RefreshTokens.AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Token == refreshToken);
+
+            return !(token is null) && token.ExpirationDate.ToLocalTime() > DateTime.Now 
+                ? token
+                : null;
         }
     }
 }

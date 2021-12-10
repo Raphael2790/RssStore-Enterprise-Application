@@ -7,5 +7,9 @@ namespace RssSE.WebApp.MVC.Interfaces.Services
     {
         Task<UserLoginResponse> Login(UserLoginViewModel userLogin);
         Task<UserLoginResponse> Register(RegisterUserViewModel registerUser);
+        Task ContextLogin(UserLoginResponse loginResponse);
+        bool TokenHasExpired();
+        Task ContextLogout();
+        Task<bool> RefreshTokenIsValid();
     }
 }

@@ -21,6 +21,8 @@ namespace RssSE.WebApi.Core.User
 
         public HttpContext GetHttpContext() => _acessor.HttpContext;
 
+        public string GetRefreshToken() => IsAuthenticated() ? _acessor.HttpContext.User.GetRefreshToken() : "";
+
         public string GetUserEmail() => IsAuthenticated() ? _acessor.HttpContext.User.GetUserEmail() : "";
 
         public Guid GetUserId() => IsAuthenticated() ? Guid.Parse(_acessor.HttpContext.User.GetUserId()) : Guid.Empty;
