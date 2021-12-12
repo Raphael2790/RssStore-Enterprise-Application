@@ -18,6 +18,8 @@ namespace RssSE.Bff.Purchases.Configuration
 
             services.AddControllers();
 
+            services.AddGrpcServicesConfiguration(configuration);
+
             services.AddCors(options =>
             {
                 options.AddPolicy("Total", builder =>

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RssSE.Cart.API.Data;
+using RssSE.Cart.API.Services.gRPC;
 using RssSE.WebApi.Core.Identity;
 
 namespace RssSE.Cart.API.Configuration
@@ -17,6 +18,8 @@ namespace RssSE.Cart.API.Configuration
 
             services.AddDbContext<CartDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddGrpc();
 
             services.AddControllers();
 
@@ -50,6 +53,7 @@ namespace RssSE.Cart.API.Configuration
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapGrpcService<CartGrpcService>().RequireCors("Total");
             });
         }
     }

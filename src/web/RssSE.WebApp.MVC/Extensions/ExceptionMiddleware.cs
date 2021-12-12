@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Grpc.Core;
+using Microsoft.AspNetCore.Http;
 using Polly.CircuitBreaker;
 using Refit;
 using RssSE.WebApp.MVC.Interfaces.Services;
@@ -44,6 +45,10 @@ namespace RssSE.WebApp.MVC.Extensions
             {
                 HandleBrokenCircuitExceptionAsync(context);
             }
+            catch(RpcException ex)
+            {
+                HandleRequestExceptionAsync(context, ConvertGrpcStatusCodeToHttpStatusCode(ex.StatusCode));
+            }
         }
 
         private void HandleRequestExceptionAsync(HttpContext context, HttpStatusCode statusCode)
@@ -68,5 +73,17 @@ namespace RssSE.WebApp.MVC.Extensions
         }
 
         private void HandleBrokenCircuitExceptionAsync(HttpContext context) => context.Response.Redirect("/sistema-indisponível");
+
+        private HttpStatusCode ConvertGrpcStatusCodeToHttpStatusCode(StatusCode grpcStatusCode)
+        {
+            return grpcStatusCode switch
+            {
+                StatusCode.Internal => HttpStatusCode.BadRequest,
+                StatusCode.Unauthenticated => HttpStatusCode.Unauthorized,
+                StatusCode.PermissionDenied => HttpStatusCode.Forbidden,
+                StatusCode.Unimplemented => HttpStatusCode.NotFound,
+                _ => HttpStatusCode.InternalServerError
+            };
+        }
     }
 }

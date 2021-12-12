@@ -37,7 +37,8 @@ namespace RssSE.Identity.API.Helpers
                                     IJsonWebKeySetService jwksService,
                                     ApplicationDbContext context,
                                     SignInManager<IdentityUser> signInManager, 
-                                    IOptions<AppTokenSettings> appTokenSettings)
+                                    IOptions<AppTokenSettings> appTokenSettings,
+                                    IAspNetUser aspNetUser)
         {
             _tokenHandler = new JwtSecurityTokenHandler();
             _claimsIdentity = new ClaimsIdentity();
@@ -46,6 +47,7 @@ namespace RssSE.Identity.API.Helpers
             _context = context;
             _signInManager = signInManager;
             _appTokenSettings = appTokenSettings.Value;
+            _aspNetUser = aspNetUser;
         }
 
         public async Task<UserLoginResponse> GenerateUserToken(string email)

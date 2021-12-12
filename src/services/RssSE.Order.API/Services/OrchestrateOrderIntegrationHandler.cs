@@ -33,19 +33,17 @@ namespace RssSE.Order.API.Services
         private async void ProcessOrder(object state)
         {
             _logger.LogInformation("Processando algum pedido");
-            using (var scope = _serviceProvider.CreateScope())
-            {
-                var orderQueries = scope.ServiceProvider.GetRequiredService<IOrderQueries>();
-                var order = await orderQueries.GetAuthorizedOrders();
+            using var scope = _serviceProvider.CreateScope();
+            var orderQueries = scope.ServiceProvider.GetRequiredService<IOrderQueries>();
+            var order = await orderQueries.GetAuthorizedOrders();
 
-                if (order is null) return;
+            if (order is null) return;
 
-                var bus = scope.ServiceProvider.GetRequiredService<IMessageBus>();
-                var authorizedOrder = new AuthorizedOrderIntegrationEvent(order.CustomerId, order.Id, 
-                    order.OrderItems.ToDictionary(p => p.ProductId, p=> p.Quantity));
-                await bus.PublishAsync(authorizedOrder);
-                _logger.LogInformation($"Pedido ID: {order.Id} foi encaminhado para baixa de estoque");
-            }
+            var bus = scope.ServiceProvider.GetRequiredService<IMessageBus>();
+            var authorizedOrder = new AuthorizedOrderIntegrationEvent(order.CustomerId, order.Id,
+                order.OrderItems.ToDictionary(p => p.ProductId, p => p.Quantity));
+            await bus.PublishAsync(authorizedOrder);
+            _logger.LogInformation($"Pedido ID: {order.Id} foi encaminhado para baixa de estoque");
         }
 
         public Task StopAsync(CancellationToken cancellationToken)

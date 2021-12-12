@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RssSE.Bff.Purchases.Models;
+using RssSE.Bff.Purchases.Services.gRPC;
 using RssSE.Bff.Purchases.Services.Interfaces;
 using RssSE.WebApi.Core.Controllers;
 using System;
@@ -13,23 +14,28 @@ namespace RssSE.Bff.Purchases.Controllers
     public class CartController : MainController
     {
         private readonly ICartService _cartService;
+        private readonly ICartGrpcService _cartGrpcService;
         private readonly ICatalogService _catalogService;
         private readonly IOrderService _orderService;
 
-        public CartController(ICartService cartService, ICatalogService catalogService, IOrderService orderService)
+        public CartController(ICartService cartService, 
+                                ICatalogService catalogService, 
+                                IOrderService orderService, 
+                                ICartGrpcService cartGrpcService)
         {
             _cartService = cartService;
             _catalogService = catalogService;
             _orderService = orderService;
+            _cartGrpcService = cartGrpcService;
         }
 
         [HttpGet("compras/carrinho")]
-        public async Task<IActionResult> Index() => CustomResponse(await _cartService.GetCart());
+        public async Task<IActionResult> Index() => CustomResponse(await _cartGrpcService.GetCart());
 
         [HttpGet("compras/carrinho-quantidade")]
         public async Task<int> GetCartItensQuantity()
         {
-            var cart = await _cartService.GetCart();
+            var cart = await _cartGrpcService.GetCart();
             return cart?.CartItems.Sum(x => x.Quantity) ?? 0;
         }
 

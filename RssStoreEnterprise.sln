@@ -63,7 +63,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RssSE.Order.Infra", "src\se
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RssSE.Order.Domain", "src\services\RssSE.Order.Domain\RssSE.Order.Domain.csproj", "{A274F8FE-4D53-46EB-B4A1-467A0E3AEBCF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RssSE.Payment.RssSEPag", "src\services\RssSE.Payment.RssSEPag\RssSE.Payment.RssSEPag.csproj", "{758950A4-B3CC-4383-9CC2-30148762B008}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RssSE.Payment.RssSEPag", "src\services\RssSE.Payment.RssSEPag\RssSE.Payment.RssSEPag.csproj", "{758950A4-B3CC-4383-9CC2-30148762B008}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
