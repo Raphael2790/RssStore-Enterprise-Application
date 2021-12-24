@@ -7,10 +7,14 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 WORKDIR /src
-COPY ["src/services/RssSE.Cart.API/RssSE.Cart.API.csproj", "src/services/RssSE.Cart.API/"]
-RUN dotnet restore "src/services/RssSE.Cart.API/RssSE.Cart.API.csproj"
+COPY ["./services/RssSE.Cart.API/RssSE.Cart.API.csproj", "services/RssSE.Cart.API/"]
+COPY ["./building blocks/RssSE.Core/RssSE.Core.csproj", "building blocks/RssSE.Core/"]
+COPY ["./building blocks/RssSE.WebApi.Core/RssSE.WebApi.Core.csproj", "building blocks/RssSE.WebApi.Core/"]
+COPY ["./building blocks/RssSE.MessageBus/RssSE.MessageBus.csproj", "building blocks/RssSE.MessageBus/"]
+
+RUN dotnet restore "services/RssSE.Cart.API/RssSE.Cart.API.csproj"
 COPY . .
-WORKDIR "/src/src/services/RssSE.Cart.API"
+WORKDIR "services/RssSE.Cart.API"
 RUN dotnet build "RssSE.Cart.API.csproj" -c Release -o /app/build
 
 FROM build AS publish

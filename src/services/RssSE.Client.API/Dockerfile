@@ -7,10 +7,14 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 WORKDIR /src
-COPY ["src/services/RssSE.Client.API/RssSE.Client.API.csproj", "src/services/RssSE.Client.API/"]
-RUN dotnet restore "src/services/RssSE.Client.API/RssSE.Client.API.csproj"
+COPY ["./services/RssSE.Client.API/RssSE.Client.API.csproj", "services/RssSE.Client.API/"]
+COPY ["./building blocks/RssSE.Core/RssSE.Core.csproj", "building blocks/RssSE.Core/"]
+COPY ["./building blocks/RssSE.WebApi.Core/RssSE.WebApi.Core.csproj", "building blocks/RssSE.WebApi.Core/"]
+COPY ["./building blocks/RssSE.MessageBus/RssSE.MessageBus.csproj", "building blocks/RssSE.MessageBus/"]
+
+RUN dotnet restore "services/RssSE.Client.API/RssSE.Client.API.csproj"
 COPY . .
-WORKDIR "/src/src/services/RssSE.Client.API"
+WORKDIR "services/RssSE.Client.API"
 RUN dotnet build "RssSE.Client.API.csproj" -c Release -o /app/build
 
 FROM build AS publish

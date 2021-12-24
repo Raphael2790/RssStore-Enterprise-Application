@@ -10,7 +10,7 @@ namespace RssSE.Cart.API.Data.Mappings
         {
             builder.ToTable("ClientsCarts");
 
-            builder.HasIndex(c => c.ClientId)
+            builder.HasIndex(c => c.CustomerId)
                 .HasName("IDX_Client");
 
             builder.Property(c => c.TotalValue)

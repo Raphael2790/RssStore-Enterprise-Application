@@ -37,14 +37,14 @@ namespace RssSE.Cart.API.Services.gRPC
         {
             return await _cartDbContext.ClientCarts
                     .Include(x => x.CartItems)
-                    .FirstOrDefaultAsync(x => x.ClientId == userId);
+                    .FirstOrDefaultAsync(x => x.CustomerId == userId);
         }
 
         private static CartCustomerResponse MapCustomerCartToProtoResponse(CustomerCart cart)
         {
             var protoCart = new CartCustomerResponse
             {
-                Customerid = cart.ClientId.ToString(),
+                Customerid = cart.CustomerId.ToString(),
                 Discount = (double)cart.Discount,
                 Totalvalue = (double)cart.TotalValue,
                 Id = cart.Id.ToString(),

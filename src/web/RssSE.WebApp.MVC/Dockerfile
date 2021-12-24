@@ -7,10 +7,12 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 WORKDIR /src
-COPY ["src/web/RssSE.WebApp.MVC/RssSE.WebApp.MVC.csproj", "src/web/RssSE.WebApp.MVC/"]
-RUN dotnet restore "src/web/RssSE.WebApp.MVC/RssSE.WebApp.MVC.csproj"
+COPY ["./web/RssSE.WebApp.MVC/RssSE.WebApp.MVC.csproj", "web/RssSE.WebApp.MVC/"]
+COPY ["./building blocks/RssSE.Core/RssSE.Core.csproj", "building blocks/RssSE.Core/"]
+COPY ["./building blocks/RssSE.WebApi.Core/RssSE.WebApi.Core.csproj", "building blocks/RssSE.WebApi.Core/"]
+RUN dotnet restore "web/RssSE.WebApp.MVC/RssSE.WebApp.MVC.csproj"
 COPY . .
-WORKDIR "/src/src/web/RssSE.WebApp.MVC"
+WORKDIR "web/RssSE.WebApp.MVC"
 RUN dotnet build "RssSE.WebApp.MVC.csproj" -c Release -o /app/build
 
 FROM build AS publish

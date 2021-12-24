@@ -1,0 +1,178 @@
+version: "3"
+
+services:
+  
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbit-rssstore
+    environment: 
+      RABBITMQ_DEFAULT_USER: "rssstore"
+      RABBITMQ_DEFAULT_PASS: "rssstore"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+  
+  sql-server:
+    image: rss/rssstore-sql-server:latest
+    container_name: rssstore-sql-server
+    build: 
+      context: ../sql
+      dockerfile: ./Dockerfile
+    ports:
+      - "1433:1433"
+    environment:
+      SA_PASSWORD: "MeuDB@123"
+      ACCEPT_EULA : "Y"
+  
+  web-mvc:
+    image: rss/rssstore-web-mvc-ecommerce:latest
+    container_name: rssstore-web-mvc-ecommerce
+    build:
+      context: ../src
+      dockerfile: ./web/RssSE.WebApp.MVC/Dockerfile
+    restart: always
+    ports: 
+      - "5001:5001"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://*:5001
+    depends_on: 
+      - catalog-api
+      - identity-api
+      - customer-api
+      - bff-purchases-api
+  
+  catalog-api: 
+    image: rss/rssstore-catalog-api:latest
+    container_name: rssstore-catalog-api
+    build:
+        context: ../src
+        dockerfile: ./services/RssSE.Catalog.API/Dockerfile
+    restart: always
+    ports: 
+      - "5201:5201"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://*:5201
+    depends_on: 
+      - rabbitmq
+      - sql-server
+      
+  identity-api: 
+    image: rss/rssstore-identity-api:latest
+    container_name: rssstore-identity-api
+    build:
+        context: ../src
+        dockerfile: ./services/RssSE.Identity.API/Dockerfile
+    restart: always
+    ports: 
+      - "5401:5401"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://*:5401
+    depends_on: 
+      - rabbitmq
+      - sql-server
+      
+  cart-api: 
+    image: rss/rssstore-cart-api:latest
+    container_name: rssstore-cart-api
+    build:
+        context: ../src
+        dockerfile: ./services/RssSE.Cart.API/Dockerfile
+    restart: always
+    ports: 
+      - "5101:5101"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://*:5101
+    depends_on: 
+      - rabbitmq
+      - sql-server
+      - identity-api
+    
+  customer-api: 
+    image: rss/rssstore-customer-api:latest
+    container_name: rssstore-customer-api
+    build:
+        context: ../src
+        dockerfile: ./services/RssSE.Client.API/Dockerfile
+    restart: always
+    ports: 
+      - "5301:5301"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://*:5301
+    depends_on: 
+      - rabbitmq
+      - sql-server
+      - identity-api
+
+  bff-purchases-api: 
+    image: rss/rssstore-bff-purchases-api:latest
+    container_name: rssstore-bff-purchases-api
+    build:
+        context: ../src
+        dockerfile: ./api gateways/RssSE.Bff.Purchases/Dockerfile
+    restart: always
+    ports: 
+      - "5901:5901"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://*:5901
+    depends_on: 
+      - rabbitmq
+      - order-api
+      - identity-api
+      - payment-api
+      - cart-api 
+  
+  payment-api: 
+    image: rss/rssstore-payment-api:latest
+    container_name: rssstore-payment-api
+    build:
+        context: ../src
+        dockerfile: ./services/RssSE.Payment.API/Dockerfile
+    restart: always
+    ports: 
+      - "5601:5601"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://*:5601
+    depends_on: 
+      - rabbitmq
+      - sql-server
+      - identity-api
+      - order-api
+  
+  order-api: 
+    image: rss/rssstore-order-api:latest
+    container_name: rssstore-order-api
+    build:
+        context: ../src
+        dockerfile: ./services/RssSE.Order.API/Dockerfile
+    restart: always
+    ports: 
+      - "5501:5501"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://*:5501
+    depends_on: 
+      - rabbitmq
+      - sql-server
+      - identity-api
+      
+  rssstore-server:
+    image: rss/rssstore-server:latest
+    container_name: rssstore-server
+    build:
+      context: ./
+      dockerfile: ./nginx/Dockerfile
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - web-mvc
+
+    

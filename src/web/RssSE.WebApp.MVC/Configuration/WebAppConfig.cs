@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.DependencyInjection;
 using RssSE.WebApp.MVC.Extensions;
@@ -12,10 +13,16 @@ namespace RssSE.WebApp.MVC.Configuration
         public static void AddMvcConfiguration(this IServiceCollection services) 
         {
             services.AddControllersWithViews();
+
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            });
         }
 
         public static void UseMvcConfiguration(this IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseForwardedHeaders();
             //if (env.IsDevelopment())
             //{
             //    app.UseDeveloperExceptionPage();

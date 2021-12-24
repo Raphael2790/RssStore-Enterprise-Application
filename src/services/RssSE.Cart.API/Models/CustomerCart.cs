@@ -11,7 +11,7 @@ namespace RssSE.Cart.API.Models
         internal const int MAX_QUANTITY_ITEM = 5;
 
         public Guid Id { get; set; }
-        public Guid ClientId { get; set; }
+        public Guid CustomerId { get; set; }
         public decimal TotalValue { get; set; }
         public List<CartItem> CartItems { get; set; }
         public bool VoucherApplyed { get; set; }
@@ -23,7 +23,7 @@ namespace RssSE.Cart.API.Models
         public CustomerCart(Guid clientId)
         {
             Id = Guid.NewGuid();
-            ClientId = clientId;
+            CustomerId = clientId;
             CartItems = new List<CartItem>();
         }
 
@@ -124,7 +124,7 @@ namespace RssSE.Cart.API.Models
         public readonly string TotalCartValueErrorMsg = "O valor total do carrinho precisa ser maior que 0";
         public CustomerCartValidation()
         {
-            RuleFor(c => c.ClientId)
+            RuleFor(c => c.CustomerId)
                 .NotEqual(Guid.Empty)
                 .WithMessage(CustomerIdErrorMsg)
                 .NotEmpty()

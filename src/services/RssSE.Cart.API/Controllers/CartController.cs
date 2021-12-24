@@ -70,7 +70,7 @@ namespace RssSE.Cart.API.Controllers
 
         private async Task<CustomerCart> GetClientCart() =>
             await _context.ClientCarts.Include(c => c.CartItems)
-            .FirstOrDefaultAsync(c => c.ClientId == _user.GetUserId());
+            .FirstOrDefaultAsync(c => c.CustomerId == _user.GetUserId());
 
         [HttpPost("carrinho/aplicar-voucher")]
         public async Task<IActionResult> ApplyVoucher(Voucher voucher)

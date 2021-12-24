@@ -37,7 +37,7 @@ namespace RssSE.Cart.API.Services
         {
             using var scope = _serviceProvider.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<CartDbContext>();
-            var cart = await context.ClientCarts.FirstOrDefaultAsync(x => x.ClientId == message.CustomerId);
+            var cart = await context.ClientCarts.FirstOrDefaultAsync(x => x.CustomerId == message.CustomerId);
             if(cart != null)
             {
                 context.ClientCarts.Remove(cart);

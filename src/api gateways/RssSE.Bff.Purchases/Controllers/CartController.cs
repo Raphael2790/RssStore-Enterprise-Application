@@ -30,12 +30,12 @@ namespace RssSE.Bff.Purchases.Controllers
         }
 
         [HttpGet("compras/carrinho")]
-        public async Task<IActionResult> Index() => CustomResponse(await _cartGrpcService.GetCart());
+        public async Task<IActionResult> Index() => CustomResponse(await _cartService.GetCart());
 
         [HttpGet("compras/carrinho-quantidade")]
         public async Task<int> GetCartItensQuantity()
         {
-            var cart = await _cartGrpcService.GetCart();
+            var cart = await _cartService.GetCart();
             return cart?.CartItems.Sum(x => x.Quantity) ?? 0;
         }
 

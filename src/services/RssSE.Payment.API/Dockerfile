@@ -7,10 +7,15 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 WORKDIR /src
-COPY ["src/services/RssSE.Payment.API/RssSE.Payment.API.csproj", "src/services/RssSE.Payment.API/"]
-RUN dotnet restore "src/services/RssSE.Payment.API/RssSE.Payment.API.csproj"
+COPY ["./services/RssSE.Payment.API/RssSE.Payment.API.csproj", "services/RssSE.Payment.API/"]
+COPY ["./services/RssSE.Payment.RssSEPag/RssSE.Payment.RssSEPag.csproj", "services/RssSE.Payment.RssSEPag/"]
+COPY ["./building blocks/RssSE.Core/RssSE.Core.csproj", "building blocks/RssSE.Core/"]
+COPY ["./building blocks/RssSE.WebApi.Core/RssSE.WebApi.Core.csproj", "building blocks/RssSE.WebApi.Core/"]
+COPY ["./building blocks/RssSE.MessageBus/RssSE.MessageBus.csproj", "building blocks/RssSE.MessageBus/"]
+
+RUN dotnet restore "services/RssSE.Payment.API/RssSE.Payment.API.csproj"
 COPY . .
-WORKDIR "/src/src/services/RssSE.Payment.API"
+WORKDIR "services/RssSE.Payment.API"
 RUN dotnet build "RssSE.Payment.API.csproj" -c Release -o /app/build
 
 FROM build AS publish
